@@ -64,6 +64,15 @@ After the first successful build and smoke test:
 2. Remove or replace example routes/components/tests/docs not used by the real project
 3. Update `CLAUDE.md` and `ProjectMap.md` so they describe the real project (not the template)
 
+## Development Workflow
+
+Follow these phases for every change:
+
+1. **Research** — identify affected files, understand dependencies (`rg`, `git log`)
+2. **Plan** — outline approach before writing code
+3. **Execute** — write code following this guide, format with `uv run ruff format .`
+4. **QA** — `just lint && just typecheck && just test` must pass before commit
+
 ## Validation Flow
 
 - `just test`
@@ -267,6 +276,54 @@ except TimeoutError as exc:
 ```
 
 Enforced by ruff rules `BLE001` (blind-except) and `TRY` (exception handling patterns).
+
+### Ruff rules enforced
+
+```
+select = ["E", "W", "F", "I", "B", "C4", "UP", "ARG", "SIM", "TID", "N", "RUF",
+          "ASYNC", "TRY", "BLE", "RET", "LOG", "DTZ"]
+ignore = ["E501", "TRY003"]
+```
+
+Parent-relative imports (`from ..`) are banned via `ban-relative-imports = "parents"` in `[tool.ruff.lint.flake8-tidy-imports]`.
+
+## Code Review Checklist
+
+Before submitting a PR, verify:
+- No unused functions or dead code
+- All function signatures have type annotations (no `Any` unless justified)
+- Internal methods prefixed with `_`
+- No `print()` statements (use logging)
+- All imports at module level, no unused imports
+- Regression test included for bug fixes
+- Pre-commit hooks pass: `uv run pre-commit run --all-files`
+
+## Architecture & Scaling Patterns
+
+### Middleware ordering
+
+Middleware runs in reverse registration order. Register outermost (first-to-run) middleware first:
+1. `RequestIDMiddleware` — attach request ID for log tracing
+2. `RequestSizeLimitMiddleware` — reject oversized payloads before parsing
+3. `CORSMiddleware` — handle cross-origin requests
+
+See `projects/backend/package/main.py` for the reference implementation.
+
+### Lifespan resource management
+
+Use FastAPI's `lifespan` context manager for startup/shutdown resources (database pools, thread executors, caches). Resources created in `yield` are cleaned up on shutdown.
+
+### Thread pool sizing
+
+Install a bounded `ThreadPoolExecutor` via lifespan to prevent unbounded OS thread spawning under concurrent `run_in_executor` calls. Default: `min(32, cpu_count + 4)`.
+
+### Adding new backend modules
+
+Follow the existing layer pattern:
+- `api/` — route handlers (thin, delegate to services)
+- `services/` — business logic
+- `domain/` — Pydantic models and domain types
+- `core/` — configuration, middleware, shared utilities
 
 ## Commit Message Format
 
