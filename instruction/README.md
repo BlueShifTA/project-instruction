@@ -1,0 +1,125 @@
+# Instructional Documentation
+
+Reusable workflow templates, role-based guidance, and decision frameworks for building software teams.
+
+For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
+
+---
+
+## Quick Start
+
+| Goal | File | Time |
+|------|------|------|
+| Role clarity | `templates/[role].md` | 15 min |
+| Code examples | `profiles/coding-profiles/[role].md` | 20 min |
+| Team workflow | `guides/solo-workflow.md` | 30 min |
+| Quick audit | `reference/CHECKLIST.md` | 10 min |
+| Example profile | `profiles/surapat/PROFILE.md` | 20 min |
+| Decision rules | `profiles/surapat/DECISIONS.md` | 15 min |
+| Team scenarios | `guides/0-getting-started.md` | 45 min |
+
+---
+
+## By Role
+
+### Individual Contributors
+
+| Role | Template | Coding Profile |
+|------|----------|----------------|
+| Backend Engineer | `templates/3-backend-engineer.md` | `profiles/coding-profiles/data-engineer.md` |
+| Frontend Engineer | `templates/4-frontend-engineer.md` | `profiles/coding-profiles/frontend-engineer.md` |
+| Frontend (Next.js) | `templates/4-frontend-engineer.md` | `profiles/coding-profiles/frontend-nextjs.md` |
+| Systems Engineer | `templates/2-workflow-orchestration.md` | `profiles/coding-profiles/systems-engineer.md` |
+| DevOps / Reliability | `templates/6-devops-deployment.md` | `profiles/coding-profiles/reliability-engineer.md` |
+
+### Leadership
+
+| Role | Primary File | Secondary |
+|------|-------------|-----------|
+| Systems Architect | `templates/1-systems-architect.md` | `reference/TECH_DECISIONS.md` |
+| Engineering Manager | `templates/8-communication-decision-making.md` | `guides/0-getting-started.md` |
+| Product Manager | `templates/7-product-manager.md` | `guides/work-cycle.md` |
+| Tech Lead | `templates/5-code-review-standards.md` | `profiles/surapat/PROFILE.md` |
+
+---
+
+## By Goal
+
+### Starting a Project
+
+- **Solo (1-2 people):** `guides/0-getting-started.md` (Scenario 1) + `guides/solo-workflow.md`
+- **Small team (3-5):** `guides/0-getting-started.md` (Scenario 2) + pick 3-4 role `templates/`
+- **Scaling (5-10):** `guides/0-getting-started.md` (Scenario 3) + all `templates/` + `reference/CHECKLIST.md`
+
+### Fixing a Problem
+
+| Problem | File | Time |
+|---------|------|------|
+| Slow code reviews | `templates/5-code-review-standards.md` | 2 hours |
+| Team not aligned | `templates/8-communication-decision-making.md` | 1 week |
+| Code quality issues | `guides/PHASE_5_AUTO_QUALITY.md` | 2 days |
+| Security gaps | `reference/SECURITY_PATTERNS.md` | 4 hours |
+| Bad architecture decisions | `profiles/surapat/DECISIONS.md` + `reference/TECH_DECISIONS.md` | 3 days |
+
+---
+
+## By Topic
+
+- **Architecture & Design:** `templates/1-systems-architect.md`, `reference/TECH_DECISIONS.md`, `reference/AGENTIC_AI_ARCHITECTURES.md`
+- **Security:** `reference/SECURITY_PATTERNS.md`, `profiles/coding-profiles/systems-engineer.md`, `profiles/coding-profiles/reliability-engineer.md`
+- **Code Quality:** `templates/5-code-review-standards.md`, `guides/PHASE_5_AUTO_QUALITY.md`, `reference/CODE_STYLE_ANALYSIS.md`
+- **Team Management:** `templates/8-communication-decision-making.md`, `guides/work-cycle.md`, `reference/CHECKLIST.md`
+- **Deployment & Operations:** `templates/6-devops-deployment.md`, `profiles/coding-profiles/reliability-engineer.md`
+
+---
+
+## Directory Structure
+
+```
+instruction/
+├── profiles/
+│   ├── surapat/                   # Example personal profile
+│   │   ├── PROFILE.md             # Coding style, tools, patterns
+│   │   ├── DECISIONS.md           # Tech decision rules
+│   │   └── WORKFLOWS.md           # Workflow + process
+│   └── coding-profiles/           # Generic engineer profiles
+│       ├── data-engineer.md
+│       ├── frontend-engineer.md
+│       ├── frontend-nextjs.md
+│       ├── fullstack-architect.md
+│       ├── reliability-engineer.md
+│       └── systems-engineer.md
+├── templates/                     # Role-based guidance
+│   ├── 1-systems-architect.md
+│   ├── 2-workflow-orchestration.md
+│   ├── 3-backend-engineer.md
+│   ├── 4-frontend-engineer.md
+│   ├── 5-code-review-standards.md
+│   ├── 6-devops-deployment.md
+│   ├── 7-product-manager.md
+│   └── 8-communication-decision-making.md
+├── guides/                        # Workflow playbooks
+│   ├── 0-getting-started.md       # 5 entry scenarios
+│   ├── solo-workflow.md
+│   ├── work-cycle.md
+│   ├── PHASE_5_AUTO_QUALITY.md
+│   └── PROJECT_QUICKSTART.md
+└── reference/                     # Checklists & standards
+    ├── CHECKLIST.md
+    ├── SECURITY_PATTERNS.md
+    ├── AGENTIC_AI_ARCHITECTURES.md
+    ├── AUDIT_TEMPLATE.md
+    ├── CODE_STYLE_ANALYSIS.md
+    ├── PATTERNS.md
+    ├── TECH_DECISIONS.md
+    └── TEMPLATE_REGISTRY.md
+```
+
+---
+
+## Contributing
+
+To add your personal profile:
+1. Create `profiles/[your-name]/` directory
+2. Add `PROFILE.md` (coding style), `DECISIONS.md` (tech decisions), `WORKFLOWS.md` (process)
+3. Keep `templates/` generic for team-wide use

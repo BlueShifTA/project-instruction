@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: ci/Dockerfile
+    container_name: project-template-app
+    volumes:
+      - ../projects:/app/projects
+      - ../docs:/app/docs
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: tail -f /dev/null
+
+  docs:
+    build:
+      context: ..
+      dockerfile: ci/Dockerfile
+    container_name: project-template-docs
+    volumes:
+      - ../docs:/app/docs
+    ports:
+      - "8000:8000"
+    command: bash -c "cd docs && sphinx-build -b html . _build/html && cd _build/html && python -m http.server 8000"

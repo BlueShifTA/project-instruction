@@ -1,0 +1,62 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.10
+    hooks:
+      - id: ruff
+        name: ruff-check-backend
+        args: [--fix, projects/backend]
+      - id: ruff-format
+        name: ruff-format-backend
+        args: [projects/backend]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=1000"]
+      - id: detect-private-key
+
+  - repo: local
+    hooks:
+      - id: no-dotenv-commit
+        name: block .env file commits
+        language: fail
+        entry: "Refusing to commit a .env file containing real secrets. Use .env.example for placeholders."
+        files: ^\.env(\.local|\.production|\..*\.local)?$
+        exclude: ^\.env\.(example|test)$
+
+      - id: backend-mypy
+        name: backend-mypy
+        entry: bash -lc 'PYTHONPATH=projects/backend uv run mypy projects/backend/package'
+        language: system
+        pass_filenames: false
+      - id: backend-pyright
+        name: backend-pyright
+        entry: bash -lc 'uv run pyright projects/backend/package'
+        language: system
+        pass_filenames: false
+      - id: frontend-prettier
+        name: frontend-prettify
+        entry: bash -lc 'cd projects/frontend && npm run prettify'
+        language: system
+        pass_filenames: false
+      - id: frontend-prettier-check
+        name: frontend-prettier-check
+        entry: bash -lc 'cd projects/frontend && npm run prettier:check'
+        language: system
+        pass_filenames: false
+      - id: frontend-eslint
+        name: frontend-eslint
+        entry: bash -lc 'cd projects/frontend && npm run lint'
+        language: system
+        pass_filenames: false
+      - id: no-sys-path-mutation
+        name: no-sys-path-mutation
+        entry: bash -lc 'uv run python scripts/check_no_sys_path_mutation.py'
+        language: system
+        pass_filenames: false
