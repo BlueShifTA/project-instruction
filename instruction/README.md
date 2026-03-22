@@ -36,7 +36,7 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 
 | Role | Primary File | Secondary |
 |------|-------------|-----------|
-| Systems Architect | `templates/1-systems-architect.md` | `reference/TECH_DECISIONS.md` |
+| Systems Architect | `templates/1-systems-architect.md` | `profiles/surapat/DECISIONS.md` |
 | Engineering Manager | `templates/8-communication-decision-making.md` | `guides/0-getting-started.md` |
 | Product Manager | `templates/7-product-manager.md` | `guides/WORK_CYCLE.md` |
 | Tech Lead | `templates/5-code-review-standards.md` | `profiles/surapat/PROFILE.md` |
@@ -59,13 +59,13 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 | Team not aligned | `templates/8-communication-decision-making.md` | 1 week |
 | Code quality issues | `guides/PHASE_5_AUTO_QUALITY.md` | 2 days |
 | Security gaps | `reference/SECURITY_PATTERNS.md` | 4 hours |
-| Bad architecture decisions | `profiles/surapat/DECISIONS.md` + `reference/TECH_DECISIONS.md` | 3 days |
+| Bad architecture decisions | `profiles/surapat/DECISIONS.md` + `reference/AGENTIC_AI_ARCHITECTURES.md` | 3 days |
 
 ---
 
 ## By Topic
 
-- **Architecture & Design:** `templates/1-systems-architect.md`, `reference/TECH_DECISIONS.md`, `reference/AGENTIC_AI_ARCHITECTURES.md`
+- **Architecture & Design:** `templates/1-systems-architect.md`, `profiles/surapat/DECISIONS.md`, `reference/AGENTIC_AI_ARCHITECTURES.md`
 - **Security:** `reference/SECURITY_PATTERNS.md`, `profiles/coding-profiles/systems-engineer.md`, `profiles/coding-profiles/reliability-engineer.md`
 - **Code Quality:** `templates/5-code-review-standards.md`, `guides/PHASE_5_AUTO_QUALITY.md`, `reference/CODE_STYLE_ANALYSIS.md`
 - **Team Management:** `templates/8-communication-decision-making.md`, `guides/WORK_CYCLE.md`, `reference/CHECKLIST.md`
@@ -78,7 +78,7 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 - **Solo founders (2 hours):** `guides/0-getting-started.md` (Scenario 1) -> `guides/SOLO_WORKFLOW.md` -> `guides/PROJECT_QUICKSTART.md`
 - **Engineering managers (4 hours):** `guides/0-getting-started.md` (Scenario 3) -> all `templates/` -> `reference/CHECKLIST.md` monthly
 - **New team members (1 week):** `guides/0-getting-started.md` (Scenario 2) -> your role template -> your coding profile
-- **Architects (8 hours):** `templates/1-systems-architect.md` -> `reference/TECH_DECISIONS.md` -> `reference/AGENTIC_AI_ARCHITECTURES.md`
+- **Architects (8 hours):** `templates/1-systems-architect.md` -> `profiles/surapat/DECISIONS.md` -> `reference/AGENTIC_AI_ARCHITECTURES.md`
 - **Code reviewers (3 hours):** `templates/5-code-review-standards.md` -> all `profiles/coding-profiles/` -> `reference/CODE_STYLE_ANALYSIS.md`
 
 ---
@@ -137,7 +137,7 @@ instruction/
     ├── AUDIT_TEMPLATE.md
     ├── CODE_STYLE_ANALYSIS.md
     ├── PATTERNS.md
-    ├── TECH_DECISIONS.md
+    ├── STRUCTURE.md
     └── TEMPLATE_REGISTRY.md
 ```
 
