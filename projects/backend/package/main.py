@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 import uuid
 from collections.abc import AsyncGenerator
@@ -9,7 +10,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+from starlette.responses import Response
 
 from package.api.example import router as example_router
 from package.api.health import router as health_router
@@ -32,7 +34,7 @@ class RequestIDMiddleware(BaseHTTPMiddleware):
     making concurrent request logs traceable.
     """
 
-    async def dispatch(self, request: Request, call_next):
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         request_id = request.headers.get("x-request-id") or uuid.uuid4().hex
         request.state.request_id = request_id
         response = await call_next(request)
@@ -48,7 +50,7 @@ class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
     sending multi-MB JSON blobs.
     """
 
-    async def dispatch(self, request: Request, call_next):
+    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         content_length = request.headers.get("content-length")
         if content_length is not None:
             try:
@@ -73,8 +75,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
     placeholder startup/shutdown logic here with your own resource initialisation
     (database connections, caches, LLM clients, etc.).
     """
-    import asyncio
-
     settings = get_settings()
 
     # Scaling: install a bounded thread pool so run_in_executor calls cannot

@@ -1,17 +1,26 @@
 # ProjectMap
 
-Fast search map for `project-template`.
+Fast search map for `project-instruction`.
 
 ## Top-Level Map
 
 ```text
-project-template/
-├── CLAUDE.md
+project-instruction/
+├── CLAUDE.md                  # Unified coding rules (single source of truth)
 ├── ProjectMap.md
 ├── justfile
 ├── pyproject.toml
+├── .claude/
+│   ├── agents/
+│   └── skills/
+├── .github/workflows/
 ├── devops/
 ├── docs/
+├── instruction/               # Instructional documentation
+│   ├── profiles/              # Personal + generic coding profiles
+│   ├── templates/             # 8 role-based engineering templates
+│   ├── guides/                # Workflow playbooks
+│   └── reference/             # Checklists, security, architecture
 ├── projects/
 │   ├── backend/
 │   │   ├── package/
@@ -74,8 +83,9 @@ project-template/
 - Find settings/env: `rg -n "BaseSettings|env" projects/backend/package`
 - Find tests by feature: `rg -n "test_" projects/backend/tests`
 - Find frontend entrypoints: `rg -n "export default" projects/frontend/src/app`
-- Find frontend providers/theme: `rg -n "ThemeProvider|QueryClientProvider|appTheme"
-  " projects/frontend/src`
+- Find frontend providers/theme: `rg -n "ThemeProvider|QueryClientProvider|appTheme" projects/frontend/src`
 - Find generated hooks usage: `rg -n "use[A-Z].*Get|use[A-Z].*Mutation" projects/frontend/src`
 - Find OpenAPI/orval config: `rg -n "orval|openapi.json|update-api-schema" projects/frontend`
-- Find template placeholders: `rg -n "Project Template|project-template|package" .`
+- Find role templates: `ls instruction/templates/`
+- Find coding profiles: `ls instruction/profiles/coding-profiles/`
+- Find security patterns: `rg -n "security|CORS|auth" instruction/reference/SECURITY_PATTERNS.md`

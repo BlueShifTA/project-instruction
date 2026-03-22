@@ -12,7 +12,7 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 |------|------|------|
 | Role clarity | `templates/[role].md` | 15 min |
 | Code examples | `profiles/coding-profiles/[role].md` | 20 min |
-| Team workflow | `guides/solo-workflow.md` | 30 min |
+| Team workflow | `guides/SOLO_WORKFLOW.md` | 30 min |
 | Quick audit | `reference/CHECKLIST.md` | 10 min |
 | Example profile | `profiles/surapat/PROFILE.md` | 20 min |
 | Decision rules | `profiles/surapat/DECISIONS.md` | 15 min |
@@ -38,7 +38,7 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 |------|-------------|-----------|
 | Systems Architect | `templates/1-systems-architect.md` | `reference/TECH_DECISIONS.md` |
 | Engineering Manager | `templates/8-communication-decision-making.md` | `guides/0-getting-started.md` |
-| Product Manager | `templates/7-product-manager.md` | `guides/work-cycle.md` |
+| Product Manager | `templates/7-product-manager.md` | `guides/WORK_CYCLE.md` |
 | Tech Lead | `templates/5-code-review-standards.md` | `profiles/surapat/PROFILE.md` |
 
 ---
@@ -47,7 +47,7 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 
 ### Starting a Project
 
-- **Solo (1-2 people):** `guides/0-getting-started.md` (Scenario 1) + `guides/solo-workflow.md`
+- **Solo (1-2 people):** `guides/0-getting-started.md` (Scenario 1) + `guides/SOLO_WORKFLOW.md`
 - **Small team (3-5):** `guides/0-getting-started.md` (Scenario 2) + pick 3-4 role `templates/`
 - **Scaling (5-10):** `guides/0-getting-started.md` (Scenario 3) + all `templates/` + `reference/CHECKLIST.md`
 
@@ -68,7 +68,7 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 - **Architecture & Design:** `templates/1-systems-architect.md`, `reference/TECH_DECISIONS.md`, `reference/AGENTIC_AI_ARCHITECTURES.md`
 - **Security:** `reference/SECURITY_PATTERNS.md`, `profiles/coding-profiles/systems-engineer.md`, `profiles/coding-profiles/reliability-engineer.md`
 - **Code Quality:** `templates/5-code-review-standards.md`, `guides/PHASE_5_AUTO_QUALITY.md`, `reference/CODE_STYLE_ANALYSIS.md`
-- **Team Management:** `templates/8-communication-decision-making.md`, `guides/work-cycle.md`, `reference/CHECKLIST.md`
+- **Team Management:** `templates/8-communication-decision-making.md`, `guides/WORK_CYCLE.md`, `reference/CHECKLIST.md`
 - **Deployment & Operations:** `templates/6-devops-deployment.md`, `profiles/coding-profiles/reliability-engineer.md`
 
 ---
@@ -100,8 +100,8 @@ instruction/
 │   └── 8-communication-decision-making.md
 ├── guides/                        # Workflow playbooks
 │   ├── 0-getting-started.md       # 5 entry scenarios
-│   ├── solo-workflow.md
-│   ├── work-cycle.md
+│   ├── SOLO_WORKFLOW.md
+│   ├── WORK_CYCLE.md
 │   ├── PHASE_5_AUTO_QUALITY.md
 │   └── PROJECT_QUICKSTART.md
 └── reference/                     # Checklists & standards
