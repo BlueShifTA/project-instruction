@@ -1,5 +1,7 @@
 # Template System Structure
 
+> **Note:** This file describes the original instructional_scaffolding structure. For the current merged repo structure, see [instruction/README.md](../README.md).
+
 ## Complete Overview
 
 This directory contains a comprehensive template system for building and scaling startup teams.

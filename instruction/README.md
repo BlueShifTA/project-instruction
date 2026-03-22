@@ -73,6 +73,32 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 
 ---
 
+## By Audience
+
+- **Solo founders (2 hours):** `guides/0-getting-started.md` (Scenario 1) -> `guides/SOLO_WORKFLOW.md` -> `guides/PROJECT_QUICKSTART.md`
+- **Engineering managers (4 hours):** `guides/0-getting-started.md` (Scenario 3) -> all `templates/` -> `reference/CHECKLIST.md` monthly
+- **New team members (1 week):** `guides/0-getting-started.md` (Scenario 2) -> your role template -> your coding profile
+- **Architects (8 hours):** `templates/1-systems-architect.md` -> `reference/TECH_DECISIONS.md` -> `reference/AGENTIC_AI_ARCHITECTURES.md`
+- **Code reviewers (3 hours):** `templates/5-code-review-standards.md` -> all `profiles/coding-profiles/` -> `reference/CODE_STYLE_ANALYSIS.md`
+
+---
+
+## Search by Keyword
+
+| Keyword | Files |
+|---------|-------|
+| Agentic AI / Frameworks | `reference/AGENTIC_AI_ARCHITECTURES.md` |
+| API design | `templates/3-backend-engineer.md`, `profiles/coding-profiles/data-engineer.md` |
+| Code review | `templates/5-code-review-standards.md`, `reference/CODE_STYLE_ANALYSIS.md` |
+| Security | `reference/SECURITY_PATTERNS.md`, `profiles/coding-profiles/systems-engineer.md` |
+| CI/CD | `templates/6-devops-deployment.md`, `guides/PHASE_5_AUTO_QUALITY.md` |
+| Database | `profiles/coding-profiles/data-engineer.md`, `profiles/surapat/DECISIONS.md` |
+| Frontend | `templates/4-frontend-engineer.md`, `profiles/coding-profiles/frontend-engineer.md` |
+| Scaling | `guides/0-getting-started.md`, `templates/1-systems-architect.md` |
+| Testing | `templates/4-frontend-engineer.md`, `guides/PHASE_5_AUTO_QUALITY.md` |
+
+---
+
 ## Directory Structure
 
 ```
