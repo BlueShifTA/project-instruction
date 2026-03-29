@@ -70,6 +70,8 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 - **Code Quality:** `templates/5-code-review-standards.md`, `guides/PHASE_5_AUTO_QUALITY.md`, `reference/CODE_STYLE_ANALYSIS.md`
 - **Team Management:** `templates/8-communication-decision-making.md`, `guides/WORK_CYCLE.md`, `reference/CHECKLIST.md`
 - **Deployment & Operations:** `templates/6-devops-deployment.md`, `profiles/coding-profiles/reliability-engineer.md`
+- **AI Agent Operations:** `reference/AGENT_OPERATING_RULES.md`, `reference/AGENTIC_AI_ARCHITECTURES.md`
+- **Retrospectives:** `reference/LESSONS_LEARNED_TEMPLATE.md`
 
 ---
 
@@ -96,6 +98,36 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 | Frontend | `templates/4-frontend-engineer.md`, `profiles/coding-profiles/frontend-engineer.md` |
 | Scaling | `guides/0-getting-started.md`, `templates/1-systems-architect.md` |
 | Testing | `templates/4-frontend-engineer.md`, `guides/PHASE_5_AUTO_QUALITY.md` |
+| Agent operations | `reference/AGENT_OPERATING_RULES.md` |
+| Lessons learned | `reference/LESSONS_LEARNED_TEMPLATE.md` |
+| Dev cycle | `.claude/skills/dev-cycle/SKILL.md` |
+| Code review (automated) | `.claude/skills/brutal-critic/SKILL.md` |
+| Research | `.claude/skills/research/SKILL.md`, `.claude/skills/autoresearch/SKILL.md` |
+| Screenshots | `.claude/skills/screenshot/SKILL.md` |
+
+---
+
+## Claude Code Skills
+
+Skills are invocable automation commands available via `/skill-name` in Claude Code.
+
+| Skill | Purpose | Trigger |
+|-------|---------|---------|
+| `/verify` | Run tests + lint + typecheck | After code changes |
+| `/format-code` | Auto-format Python + TypeScript | When style issues found |
+| `/dev-cycle` | Full audit → fix → test → critic workflow | "run a dev cycle" |
+| `/brutal-critic` | Brutally honest code/UX/arch review | "critique this", "review" |
+| `/autoresearch` | Autonomous goal-directed iteration (bounded) | Explicit request only |
+| `/research` | Deep knowledge base research | "research [topic]" |
+| `/simplify` | Code reuse/quality/efficiency review + fix | "simplify", "clean up" |
+| `/screenshot` | Playwright desktop + mobile captures | "take screenshots" |
+| `/seed-data` | Populate database with realistic test data | "seed data" |
+| `/ci` | Run full CI pipeline locally | Before PR, after feature |
+| `/install-deps` | Install project dependencies | Setup, after pull |
+| `/run-dev` | Start dev servers | Starting development |
+| `/generate-types` | Generate frontend API types from backend | After API changes |
+
+Skill definitions: `.claude/skills/[name]/SKILL.md`
 
 ---
 
@@ -136,6 +168,8 @@ instruction/
     ├── AGENTIC_AI_ARCHITECTURES.md
     ├── AUDIT_TEMPLATE.md
     ├── CODE_STYLE_ANALYSIS.md
+    ├── AGENT_OPERATING_RULES.md
+    ├── LESSONS_LEARNED_TEMPLATE.md
     ├── PATTERNS.md
     ├── STRUCTURE.md
     └── TEMPLATE_REGISTRY.md
