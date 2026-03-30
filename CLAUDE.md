@@ -349,6 +349,15 @@ Fix boundary propagation in data pipeline
 - add regression test for the fallback scenario
 ```
 
+## Versioning
+
+Semantic versioning (`vMAJOR.MINOR.PATCH`). Tag after every commit using `just tag patch|minor|major`:
+- **PATCH** — small features, bug fixes, UI tweaks
+- **MINOR** — new modules, significant features, API additions
+- **MAJOR** — breaking changes, architectural overhauls
+
+**Rule: always tag immediately after committing.** Never accumulate untagged commits.
+
 ## Testing Philosophy
 
 - Maintain **80% minimum** code coverage
