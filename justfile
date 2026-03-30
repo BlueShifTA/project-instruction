@@ -268,6 +268,29 @@ reset: clean
   just install
   @echo "✅ Reset complete"
 
+# ──────────────────────────────────────────────────────────────
+# 🏷️ RELEASE: Version Tagging
+# ──────────────────────────────────────────────────────────────
+
+[group('release')]
+[doc("Tag a new version (patch/minor/major). Usage: just tag [patch|minor|major]")]
+tag bump="patch":
+  #!/usr/bin/env bash
+  set -euo pipefail
+  CURRENT=$(git -C {{ROOT}} describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+  VERSION="${CURRENT#v}"
+  IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+  case "{{bump}}" in
+    major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+    minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+    patch) PATCH=$((PATCH + 1)) ;;
+    *) echo "❌ Invalid bump type: {{bump}} (use patch, minor, or major)"; exit 1 ;;
+  esac
+  NEW="v${MAJOR}.${MINOR}.${PATCH}"
+  echo "🏷️  ${CURRENT} → ${NEW}"
+  git -C {{ROOT}} tag -a "$NEW" -m "Release $NEW"
+  echo "✅ Tagged $NEW (run 'git push --tags' to publish)"
+
 [group('util')]
 [doc("Show disk usage by directory")]
 du:
