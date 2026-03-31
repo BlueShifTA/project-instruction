@@ -298,6 +298,67 @@ Before submitting a PR, verify:
 - Regression test included for bug fixes
 - Pre-commit hooks pass: `uv run pre-commit run --all-files`
 
+## Codex Policy — Claude + Codex Agent Routing
+
+**Codex CLI** (`~/node_modules/.bin/codex`, authenticated) serves as a secondary agent for specific task types. Claude remains the primary agent for complex work.
+
+### Agent Routing Table
+
+| Task type | Agent | Notes |
+|-----------|-------|-------|
+| Adversarial review, code critique, design challenges | **Codex** | Always use Codex for reviews/critiques |
+| Simple/small features, minor fixes, isolated tasks | **Codex** | 1–2 files, clear scope |
+| Dev-cycle Phase 1 (audit) and Phase 6 (critic) | **Codex** | Review stages only |
+| Multi-file architecture, complex features (>3 files) | **Claude** | Cross-cutting concerns |
+| Research, web search, deep analysis | **Claude** | Needs tool orchestration |
+| Writing (proposals, emails, documentation) | **Claude** | Needs conversation context |
+| Planning, coordination (dev-cycle Phases 2–5) | **Claude** | Multi-step reasoning |
+| Tasks needing MCP tools, APIs, or memory | **Claude** | Tool access required |
+
+### Routing Decision Tree
+
+1. Is it a review, critique, or adversarial challenge? → **Codex**
+2. Is it a small, isolated change (1–2 files, clear scope)? → **Codex**
+3. Does it need web search, MCP tools, or multi-step reasoning? → **Claude**
+4. Does it touch >3 files or require architecture decisions? → **Claude**
+5. Is it research, writing, or planning? → **Claude**
+6. When in doubt → **Claude** (Codex is the secondary agent, not the default)
+
+### How to Invoke Codex
+
+```bash
+# General task
+~/node_modules/.bin/codex exec "<prompt with full context>" --dangerously-bypass-approvals-and-sandbox --ephemeral 2>&1
+
+# Code review on uncommitted changes
+~/node_modules/.bin/codex exec review --uncommitted --dangerously-bypass-approvals-and-sandbox --ephemeral 2>&1
+```
+
+Pass project-specific instructions inline or reference the project's CLAUDE.md. Codex runs in the same workspace and can read/write files.
+
+### Installation
+
+```bash
+# Install Codex CLI
+npm install -g @openai/codex
+
+# Authenticate
+codex login
+# Follow browser auth flow
+
+# Install Claude Code plugin (in Claude Code REPL)
+/plugin marketplace add openai/codex-plugin-cc
+/plugin install codex@openai-codex
+/reload-plugins
+/codex:setup
+```
+
+**Plugin skills available after install:**
+- `/codex:review` — standard code review
+- `/codex:adversarial-review` — challenge design decisions
+- `/codex:rescue` — delegate a task to Codex in background
+- `/codex:status` / `/codex:result` / `/codex:cancel` — manage Codex tasks
+
 ## Architecture & Scaling Patterns
 
 ### Middleware ordering
