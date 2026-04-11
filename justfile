@@ -20,7 +20,7 @@ install:
   @echo "📦 Installing all dependencies..."
   cd {{ROOT}} && uv sync --all-packages --all-groups
   cd {{ROOT}} && uv run pre-commit install --config {{DEVOPS}}/.pre-commit-config.yaml
-  cd {{FRONTEND}} && npm ci
+  cd {{FRONTEND}} && pnpm install --frozen-lockfile
   @echo "✅ Installation complete"
 
 [group('install')]
@@ -35,7 +35,7 @@ install-backend:
 [doc("Install frontend (Node.js) dependencies only")]
 install-frontend:
   @echo "📦 Installing frontend dependencies..."
-  cd {{FRONTEND}} && npm ci
+  cd {{FRONTEND}} && pnpm install --frozen-lockfile
   @echo "✅ Frontend ready"
 
 [group('install')]
@@ -43,7 +43,7 @@ install-frontend:
 update-deps:
   @echo "🔄 Updating Python + Node dependencies..."
   cd {{ROOT}} && uv lock --upgrade
-  cd {{FRONTEND}} && npm update
+  cd {{FRONTEND}} && pnpm update
   @echo "✅ Updated"
 
 # ──────────────────────────────────────────────────────────────
@@ -58,7 +58,7 @@ run-backend:
 [group('run')]
 [doc("Start Next.js frontend dev server (http://localhost:3000)")]
 run-frontend:
-  cd {{FRONTEND}} && npm run dev
+  cd {{FRONTEND}} && pnpm run dev
 
 [group('run')]
 [doc("⚠️  Run both backend & frontend (use separate terminals with: just run-backend & just run-frontend)")]
@@ -111,7 +111,7 @@ run-ci:
   cd {{ROOT}} && uv run ruff check {{BACKEND}}
   cd {{ROOT}} && uv run python {{SCRIPTS}}/check_no_sys_path_mutation.py
   @echo "  → Building frontend..."
-  cd {{FRONTEND}} && npm ci && npm run prettier:check && npm run lint && npm run typecheck && NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000 npm run build
+  cd {{FRONTEND}} && pnpm install --frozen-lockfile && pnpm run prettier:check && pnpm run lint && pnpm run typecheck && NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000 pnpm run build
   @echo "✅ CI checks passed!"
 
 [group('test')]
@@ -120,16 +120,16 @@ run-ci-local:
   @echo "🔄 Running GitHub CI pipeline locally..."
   @echo ""
   @echo "═══ Frontend Job ═══"
-  @echo "  → npm ci..."
-  cd {{FRONTEND}} && npm ci
+  @echo "  → pnpm install --frozen-lockfile..."
+  cd {{FRONTEND}} && pnpm install --frozen-lockfile
   @echo "  → Prettier check..."
-  cd {{FRONTEND}} && npm run prettier:check
+  cd {{FRONTEND}} && pnpm run prettier:check
   @echo "  → ESLint..."
-  cd {{FRONTEND}} && npm run lint
+  cd {{FRONTEND}} && pnpm run lint
   @echo "  → Typecheck..."
-  cd {{FRONTEND}} && npm run typecheck
+  cd {{FRONTEND}} && pnpm run typecheck
   @echo "  → Build..."
-  cd {{FRONTEND}} && NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000 npm run build
+  cd {{FRONTEND}} && NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000 pnpm run build
   @echo ""
   @echo "═══ Backend Job ═══"
   @echo "  → Sync dependencies..."
@@ -171,7 +171,7 @@ format:
   cd {{ROOT}} && uv run ruff check --fix {{BACKEND}}
   cd {{ROOT}} && uv run ruff format {{BACKEND}}
   @echo "📝 Formatting JavaScript/TypeScript..."
-  cd {{FRONTEND}} && npm run prettier:write && npm run lint:fix
+  cd {{FRONTEND}} && pnpm run prettier:write && pnpm run lint:fix
   @echo "✅ Formatting complete"
 
 [group('lint')]
@@ -179,7 +179,7 @@ format:
 format-check:
   @echo "🔍 Checking format..."
   cd {{ROOT}} && uv run ruff format --check {{BACKEND}}
-  cd {{FRONTEND}} && npm run prettier:check
+  cd {{FRONTEND}} && pnpm run prettier:check
 
 [group('lint')]
 [doc("Type check Python code (mypy + pyright)")]
@@ -192,7 +192,7 @@ typecheck-python:
 [doc("Type check TypeScript/JavaScript")]
 typecheck-frontend:
   @echo "🔍 Type checking TypeScript..."
-  cd {{FRONTEND}} && npm run typecheck
+  cd {{FRONTEND}} && pnpm run typecheck
 
 [group('lint')]
 [doc("Type check all (Python + TypeScript)")]
@@ -201,7 +201,7 @@ typecheck: typecheck-python typecheck-frontend
 [group('lint')]
 [doc("Lint frontend (eslint)")]
 lint-frontend:
-  cd {{FRONTEND}} && npm run lint
+  cd {{FRONTEND}} && pnpm run lint
 
 # ──────────────────────────────────────────────────────────────
 # 🔧 GENERATE: Code Generation
@@ -211,7 +211,7 @@ lint-frontend:
 [doc("Generate frontend API client types from OpenAPI schema")]
 generate-frontend-types:
   @echo "📚 Generating frontend API types..."
-  cd {{FRONTEND}} && npm run api
+  cd {{FRONTEND}} && pnpm run api
   @echo "✅ Types generated"
 
 [group('generate')]

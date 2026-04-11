@@ -32,7 +32,7 @@ export default function Home() {
         </Section>
         <Section title="Bootstrap" description="Template setup and API client generation.">
           <p className="font-mono text-sm">just bootstrap</p>
-          <p className="mt-2 font-mono text-sm">npm run api</p>
+          <p className="mt-2 font-mono text-sm">pnpm run api</p>
         </Section>
       </div>
 

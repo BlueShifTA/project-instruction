@@ -105,7 +105,7 @@ git commit -m "Add retry logic to camera capture with regression test"
 
 ### Just (Task Runner)
 ```bash
-just install           # Install deps (uv + npm)
+just install           # Install deps (uv + pnpm)
 just run-hub           # Start hub server (port 5001)
 just run-reader        # Start reader server (port 5003)
 just run-frontend      # Start Next.js dev (port 3000)

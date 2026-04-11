@@ -65,3 +65,8 @@ uv.lock
 .env.*.local
 !.env.example
 !.env.test
+
+# Package manager lockfiles (pnpm uses pnpm-lock.yaml)
+package-lock.json
+yarn.lock
+.pnpm-store

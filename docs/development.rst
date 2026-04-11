@@ -62,14 +62,14 @@ Run the frontend::
 
 Direct equivalent::
 
-   cd projects/frontend && npm run dev
+   cd projects/frontend && pnpm run dev
 
 Frontend checks:
 
 * ``just frontend-lint``
 * ``just frontend-typecheck``
 * ``just frontend-build``
-* ``cd projects/frontend && npm run prettier:check``
+* ``cd projects/frontend && pnpm run prettier:check``
 
 Frontend lint config lives in ``projects/frontend/eslint.config.mjs``.
 
@@ -94,7 +94,7 @@ Generate frontend API types/hooks::
 
    just generate-frontend-types
 
-This runs the frontend ``npm run api`` script, which:
+This runs the frontend ``pnpm run api`` script, which:
 
 1. Downloads ``/openapi.json`` into ``projects/frontend/openapi.json``
 2. Runs Orval to generate models + React Query hooks

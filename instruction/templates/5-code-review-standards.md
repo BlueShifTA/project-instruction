@@ -94,7 +94,7 @@ pre-checks:
   - Type checker (TypeScript, mypy)
   - Test suite (unit + integration)
   - Coverage check (80% minimum)
-  - Security scan (npm audit, bandit)
+  - Security scan (pnpm audit, bandit)
   - Performance baseline (compare to main)
 ```
 

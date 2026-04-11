@@ -141,7 +141,7 @@ GOOD: Read schema first → SELECT username FROM users
 
 ### 2. Don't blind-install packages
 
-Before running `pip install`, `npm install`, or any package installation, check if the dependency is already listed in the project's dependency file (requirements.txt, package.json, pyproject.toml).
+Before running `pip install`, `pnpm install`, or any package installation, check if the dependency is already listed in the project's dependency file (requirements.txt, package.json, pyproject.toml).
 
 ### 3. Don't declare success before verification
 

@@ -132,8 +132,8 @@ python -m uvicorn src.main:app
 
 # Terminal 2: Frontend
 cd frontend
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 # Visit http://localhost:3000
 ```
 

@@ -64,14 +64,20 @@ After the first successful build and smoke test:
 2. Remove or replace example routes/components/tests/docs not used by the real project
 3. Update `CLAUDE.md` and `ProjectMap.md` so they describe the real project (not the template)
 
-## Development Workflow
+## Development Workflow — Test-Driven Development (TDD)
+
+Every code change follows the TDD cycle: **Red → Green → Refactor**.
 
 Follow these phases for every change:
 
 1. **Research** — identify affected files, understand dependencies (`rg`, `git log`)
-2. **Plan** — outline approach before writing code
-3. **Execute** — write code following this guide, format with `uv run ruff format .`
-4. **QA** — `just lint && just typecheck && just test` must pass before commit
+2. **Plan** — outline approach, identify edge cases and error paths
+3. **Test first** — write failing tests that define expected behavior → run → confirm RED
+4. **Implement** — write minimum code to pass tests → run → confirm GREEN
+5. **Refactor** — clean up implementation while tests stay green
+6. **Validate** — `just lint && just typecheck && just test` must all pass before commit
+
+**Never write implementation code before the test exists.** If you can't test it, redesign it until you can.
 
 ## Validation Flow
 
@@ -287,6 +293,158 @@ ignore = ["E501", "TRY003"]
 
 Parent-relative imports (`from ..`) are banned via `ban-relative-imports = "parents"` in `[tool.ruff.lint.flake8-tidy-imports]`.
 
+## SOLID Principles — Mandatory
+
+All production code must satisfy SOLID. These are not suggestions — violations are architecture drift.
+
+> **Extended examples, frontend patterns, and testing guidance:** See [`instruction/reference/SOLID_PRINCIPLES.md`](instruction/reference/SOLID_PRINCIPLES.md)
+
+### S — Single Responsibility Principle
+
+A class or module has exactly one reason to change. One job per unit.
+
+```python
+# WRONG — UserService does auth, email, and DB in one class
+class UserService:
+    def authenticate(self, token: str) -> bool: ...
+    def send_welcome_email(self, user_id: int) -> None: ...
+    def save_to_db(self, user: User) -> None: ...
+
+# CORRECT — split into focused units
+class AuthService:
+    def authenticate(self, token: str) -> bool: ...
+
+class EmailService:
+    def send_welcome(self, user_id: int) -> None: ...
+
+class UserRepository:
+    def save(self, user: User) -> None: ...
+```
+
+**Anti-patterns:** God classes, "Manager" or "Util" blobs, modules importing from five unrelated domains.
+
+### O — Open/Closed Principle
+
+Open for extension, closed for modification. Add new behavior via composition or strategy — never by editing core logic.
+
+```python
+import typing as tp
+
+class MetricExporter(tp.Protocol):
+    def export(self, metrics: dict[str, float]) -> None: ...
+
+# New backends added without touching existing code
+class PrometheusExporter:
+    def export(self, metrics: dict[str, float]) -> None: ...
+
+class DatadogExporter:
+    def export(self, metrics: dict[str, float]) -> None: ...
+
+class MetricsPipeline:
+    def __init__(self, exporter: MetricExporter) -> None:
+        self.exporter: MetricExporter = exporter
+
+    def flush(self, metrics: dict[str, float]) -> None:
+        self.exporter.export(metrics)
+```
+
+**Anti-patterns:** `if isinstance(x, TypeA): ... elif isinstance(x, TypeB): ...` chains that grow with every new type. Editing a core class every time a new variant is needed.
+
+### L — Liskov Substitution Principle
+
+Subtypes must be fully substitutable for their base type without breaking behavior. If `B` extends `A`, code using `A` must work unchanged with `B`.
+
+```python
+import typing as tp
+
+class StorageBackend(tp.Protocol):
+    async def read(self, key: str) -> bytes: ...
+    async def write(self, key: str, data: bytes) -> None: ...
+
+# Both satisfy the contract — callers don't care which one they get
+class S3Backend:
+    async def read(self, key: str) -> bytes: ...
+    async def write(self, key: str, data: bytes) -> None: ...
+
+class LocalBackend:
+    async def read(self, key: str) -> bytes: ...
+    async def write(self, key: str, data: bytes) -> None: ...
+```
+
+**Anti-patterns:** Subclass raises `NotImplementedError` for a parent method. Subclass silently narrows accepted input types. Subclass returns `None` where base returns a value.
+
+### I — Interface Segregation Principle
+
+Many small, specific interfaces beat one fat interface. Clients should only depend on methods they actually use.
+
+```python
+import typing as tp
+
+# WRONG — one fat protocol forces all implementors to support everything
+class BigBackend(tp.Protocol):
+    async def read(self, key: str) -> bytes: ...
+    async def write(self, key: str, data: bytes) -> None: ...
+    async def delete(self, key: str) -> None: ...
+    async def list_keys(self, prefix: str) -> list[str]: ...
+    async def get_metadata(self, key: str) -> dict[str, str]: ...
+
+# CORRECT — split by usage pattern
+class Readable(tp.Protocol):
+    async def read(self, key: str) -> bytes: ...
+
+class Writable(tp.Protocol):
+    async def write(self, key: str, data: bytes) -> None: ...
+
+class Listable(tp.Protocol):
+    async def list_keys(self, prefix: str) -> list[str]: ...
+
+# Combine only what a specific consumer needs
+class ReadWriteBackend(Readable, Writable, tp.Protocol): ...
+```
+
+**Anti-patterns:** A Protocol with 10+ methods where most callers use 2. Forcing mock implementations to stub out irrelevant methods.
+
+### D — Dependency Inversion Principle
+
+High-level modules must not depend on low-level modules. Both depend on abstractions. Inject dependencies — never instantiate concrete classes inside business logic.
+
+```python
+import typing as tp
+
+# Abstraction (Protocol) — neither side depends on the other directly
+class InferenceBackend(tp.Protocol):
+    async def generate(self, prompt: str) -> str: ...
+
+# High-level service depends on the abstraction only
+class PerformanceAnalyzer:
+    def __init__(self, backend: InferenceBackend) -> None:
+        self.backend: InferenceBackend = backend  # injected
+
+    async def analyze(self, trace: str) -> str:
+        return await self.backend.generate(f"Analyze this trace: {trace}")
+
+# Low-level concretions — wired up at composition root, never inside PerformanceAnalyzer
+class VLLMBackend:
+    async def generate(self, prompt: str) -> str: ...
+
+class OllamaBackend:
+    async def generate(self, prompt: str) -> str: ...
+```
+
+**Anti-patterns:** `self.db = PostgresClient()` inside `__init__`. Importing and instantiating a concrete class at the top of a service module. Hardcoding the storage engine, HTTP client, or model provider inside business logic.
+
+> **Note:** `Protocol`-based polymorphism (already required in this project) is the primary mechanism for DIP. See the [Protocol-based polymorphism](#protocol-based-polymorphism) section above.
+
+### SOLID PR Checklist
+
+Add to the standard review checklist (see "Code Review Checklist" below):
+
+- [ ] **SRP** — does each class/module have exactly one reason to change? No god classes or "utils" blobs.
+- [ ] **OCP** — can new behavior be added via extension without editing existing core logic?
+- [ ] **LSP** — do all Protocol implementors honor the full contract (no silent narrowing, no surprise `NotImplementedError`)?
+- [ ] **ISP** — are interfaces minimal? No client forced to depend on methods it doesn't use.
+- [ ] **DIP** — do services depend on `Protocol` abstractions, with concretions injected at the composition root?
+
 ## Code Review Checklist
 
 Before submitting a PR, verify:
@@ -297,6 +455,7 @@ Before submitting a PR, verify:
 - All imports at module level, no unused imports
 - Regression test included for bug fixes
 - Pre-commit hooks pass: `uv run pre-commit run --all-files`
+- SOLID compliance (see "SOLID Principles — Mandatory" section): SRP, OCP, LSP, ISP, DIP all checked
 
 ## Codex Policy — Claude + Codex Agent Routing
 
@@ -340,7 +499,7 @@ Pass project-specific instructions inline or reference the project's CLAUDE.md. 
 
 ```bash
 # Install Codex CLI
-npm install -g @openai/codex
+pnpm add -g @openai/codex
 
 # Authenticate
 codex login
@@ -419,15 +578,28 @@ Semantic versioning (`vMAJOR.MINOR.PATCH`). Tag after every commit using `just t
 
 **Rule: always tag immediately after committing.** Never accumulate untagged commits.
 
-## Testing Philosophy
+## Testing Philosophy — TDD First
 
-- Maintain **80% minimum** code coverage
-- **Prefer integration tests** for established features (test real behavior)
-- **Unit tests** acceptable for MVP and isolated logic
-- **Regression tests required** for every bug fix
-- Fast execution (no unnecessary sleep)
+**TDD is mandatory.** Write tests before implementation for every feature, fix, and refactor.
+
+**Test priority order:**
+1. Error paths and edge cases FIRST (these break in production)
+2. Happy path second
+3. Integration tests for established features, unit tests for isolated logic
+4. Regression test required for every bug fix
+
+**Coverage targets:**
+- Core business logic: 95%+ (CRUD, auth, domain models)
+- API routes: 90%+ (all status codes, validation errors, edge cases)
+- Services: 85%+ (including failure modes)
+- Frontend components: test user-facing behavior, not implementation details
+- **Minimum floor: 80%** — no PR merges below this
+
+**Execution:**
+- Fast tests (no unnecessary sleep)
 - Test markers: `slow`, `integration`, `unit`
 - Run specific tests: `uv run pytest tests -k test_name`
+- Always run full suite before commit: `just test && just lint && just typecheck`
 
 ## Security Patterns (Summary)
 

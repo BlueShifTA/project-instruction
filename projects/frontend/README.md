@@ -16,11 +16,13 @@ Next.js frontend for the project template application.
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Run development server
-npm run dev
+pnpm run dev
 ```
+
+> **Note:** On first setup, `pnpm install` generates `pnpm-lock.yaml`. Commit this file — CI requires it (`--frozen-lockfile`).
 
 Visit http://localhost:3000
 
@@ -46,7 +48,7 @@ OpenAPI client code can be generated from the backend API:
 
 ```bash
 # Generate TypeScript client from OpenAPI spec
-npm run api
+pnpm run api
 ```
 
 This will:

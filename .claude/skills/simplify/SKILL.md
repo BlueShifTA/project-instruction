@@ -82,7 +82,7 @@ For each issue (grouped by file to minimize edits):
 1. Make the fix using Edit.
 2. After each file is modified, run a quick verification:
    - Python: `ruff check <file>` or equivalent linter
-   - TypeScript: `npx tsc --noEmit` on the file or `npx eslint <file>`
+   - TypeScript: `pnpm exec tsc --noEmit` on the file or `pnpm exec eslint <file>`
 3. If the fix introduces errors, revert the change and skip it with a note.
 
 **Fix guidelines:**

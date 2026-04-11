@@ -24,7 +24,7 @@ Scope defaults to `all` unless specified: `$ARGUMENTS`
 
 3. If scoped to `frontend` only:
    ```bash
-   cd $(just --evaluate FRONTEND) && npm run prettier:write && npm run lint:fix
+   cd $(just --evaluate FRONTEND) && pnpm run prettier:write && pnpm run lint:fix
    ```
 
 4. Report what changed — list files modified by the formatter.

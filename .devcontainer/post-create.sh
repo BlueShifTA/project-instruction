@@ -13,8 +13,9 @@ echo "🔗 Installing pre-commit hooks..."
 uv run pre-commit install --config devops/.pre-commit-config.yaml
 
 echo "📚 Installing frontend dependencies..."
+corepack enable && corepack prepare pnpm@10.33.0 --activate
 cd projects/frontend
-npm ci
+pnpm install --frozen-lockfile
 cd ../..
 
 echo "✅ Dev container ready!"

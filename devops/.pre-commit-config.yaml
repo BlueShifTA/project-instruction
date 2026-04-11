@@ -42,17 +42,17 @@ repos:
         pass_filenames: false
       - id: frontend-prettier
         name: frontend-prettify
-        entry: bash -lc 'cd projects/frontend && npm run prettify'
+        entry: bash -lc 'cd projects/frontend && pnpm run prettify'
         language: system
         pass_filenames: false
       - id: frontend-prettier-check
         name: frontend-prettier-check
-        entry: bash -lc 'cd projects/frontend && npm run prettier:check'
+        entry: bash -lc 'cd projects/frontend && pnpm run prettier:check'
         language: system
         pass_filenames: false
       - id: frontend-eslint
         name: frontend-eslint
-        entry: bash -lc 'cd projects/frontend && npm run lint'
+        entry: bash -lc 'cd projects/frontend && pnpm run lint'
         language: system
         pass_filenames: false
       - id: no-sys-path-mutation

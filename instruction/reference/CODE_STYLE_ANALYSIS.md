@@ -643,7 +643,7 @@ see merge request <ORG>/<REPO>!1824
 **Key Commands:**
 ```bash
 # Installation
-just install               # uv sync + npm ci (frontend + docs)
+just install               # uv sync + pnpm install --frozen-lockfile (frontend + docs)
 just install-pre-commit    # Install git hooks
 
 # Development

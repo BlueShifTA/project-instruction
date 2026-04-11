@@ -14,7 +14,7 @@ Use this profile when building or evolving a reusable Next.js frontend template 
 - stay product-agnostic
 - enforce a modular component structure
 - package reusable controls (buttons, text fields, layout shells) at a shared module level
-- keep strong developer ergonomics (`just`, npm scripts, lint/typecheck)
+- keep strong developer ergonomics (`just`, pnpm scripts, lint/typecheck)
 
 This profile extracts patterns, not product logic.
 
@@ -304,12 +304,12 @@ Add shared frontend UI foundation for template
 - problem: frontend template only had page-level Tailwind markup with no reusable controls
 - add MUI theme/tokens/providers and shared button/text-field wrappers
 - refactor home page to use placeholder-first modular demo components
-- add just/npm convenience aliases for frontend checks and API generation
+- add just/pnpm convenience aliases for frontend checks and API generation
 ```
 
 ---
 
-## Development Workflow (`just` + npm)
+## Development Workflow (`just` + pnpm)
 
 Template baseline commands:
 
@@ -318,7 +318,7 @@ Template baseline commands:
 - `just frontend-typecheck`
 - `just frontend-build`
 - `just generate-frontend-types`
-- `cd projects/frontend && npm run api`
+- `cd projects/frontend && pnpm run api`
 
 Keep command alignment additive:
 
@@ -368,5 +368,5 @@ Pattern yes, product no.
 - Page shell/section components exist for layout composition
 - Home page demonstrates placeholder-first modular UI usage
 - `just` frontend convenience aliases exist
-- npm script aliases exist without breaking existing commands
+- pnpm script aliases exist without breaking existing commands
 - Docs explain extraction and placeholder rules

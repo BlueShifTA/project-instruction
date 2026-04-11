@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    reactCompiler: {
+      target: '18',
+    },
+  },
   async rewrites() {
     return [
       {

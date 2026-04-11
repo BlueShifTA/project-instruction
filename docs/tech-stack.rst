@@ -87,7 +87,7 @@ CI/CD (GitHub Actions)
 CI workflow: ``.github/workflows/ci.yml``
 
 * Frontend job:
-  - ``npm ci``
+  - ``pnpm install --frozen-lockfile``
   - Prettier check
   - ESLint
   - Typecheck

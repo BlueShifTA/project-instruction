@@ -18,8 +18,8 @@ Parse arguments:
 ### 1. Ensure Playwright is Available
 
 ```bash
-npx playwright --version 2>/dev/null || npm install -g playwright
-npx playwright install chromium 2>/dev/null || true
+pnpm exec playwright --version 2>/dev/null || pnpm add -g playwright
+pnpm exec playwright install chromium 2>/dev/null || true
 ```
 
 If Playwright cannot be installed, report the error and stop.
