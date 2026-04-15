@@ -137,6 +137,29 @@ All imports must be at the top of the file. Never import inside functions, metho
 
 Python 3.13 is the project baseline. Annotations already work for modern syntax (`list[str] | None`, `X | None`) without the future import. Remove `from __future__ import annotations` when you see it. For the rare self-referential TypedDict / dataclass case, use an inline string forward ref (`content: "list[ADFNode] | None"`) instead of re-enabling PEP 563 globally.
 
+### No `if TYPE_CHECKING:` blocks
+
+`from typing import TYPE_CHECKING` plus an `if TYPE_CHECKING:` guarded import block is banned. Every import is a real, unconditional, top-level import. The two reasons people reach for `TYPE_CHECKING` both have better fixes:
+
+- **"It breaks a circular import."** Then the module graph is wrong. Move the shared type into a leaf module (a `_types.py`, a domain `models.py`, a `config.py`) that both sides depend on. A `TYPE_CHECKING` block hides the cycle from the interpreter without fixing the architectural mistake — and it forces every reader to mentally evaluate "is this name actually defined at runtime?" forever after.
+- **"The import is heavy and only needed for annotations."** Pay the import cost or restructure. Module-load-time micro-optimisations are not worth a forked import graph that behaves differently at type-check time vs. runtime.
+
+`TYPE_CHECKING` also pairs badly with the no-`from __future__ import annotations` rule: under PEP 563 the strings get resolved lazily, but without it every annotation is evaluated at class-body / function-def time and a `TYPE_CHECKING`-only import becomes a `NameError` waiting to happen. Just import the symbol normally.
+
+```python
+# WRONG
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .jira_client import JiraClient   # hides a cycle, fails at runtime if used
+
+def handle(client: "JiraClient") -> None: ...
+
+# CORRECT — extract shared types to a leaf module both sides import
+from .jira_types import JiraClient        # always real, always at top
+
+def handle(client: JiraClient) -> None: ...
+```
+
 ### Always type-annotate class `__init__` attributes
 
 Every `__init__` parameter and every instance attribute assignment must have explicit type annotations. The return type must be `-> None`. Use modern union syntax: `list[str] | None` (Python 3.10+). Avoid `Any` unless truly necessary.
@@ -257,6 +280,8 @@ def fetch() -> Any:
 ```
 
 **No `from __future__ import annotations` in Python 3.13+.** Remove it when you see it. For self-referential TypedDicts, use an inline string forward ref: `content: "list[ADFNode] | None"` inside the class body.
+
+**No `if TYPE_CHECKING:` import blocks.** A `TYPE_CHECKING` guard is a smell that the module graph has a cycle the architecture isn't admitting. Move the shared TypedDict / dataclass into a leaf module both sides import, and keep all imports unconditional at the top of the file. See the import rules section above for the full rationale.
 
 **For recursive tree walkers of unknown-depth JSON** (ADF nodes, arbitrary YAML, discriminated unions Python can't statically express), keep the parameter typed as `object` and narrow with `isinstance` inside the walker. Don't force a TypedDict on a shape you can't statically know — you'll end up casting-and-praying, which is worse than owning the narrowing.
 
@@ -606,7 +631,7 @@ Before submitting a PR, verify:
 - All function signatures have type annotations (no `Any` unless justified)
 - Internal methods prefixed with `_`
 - No `print()` statements (use logging)
-- All imports at module level, no unused imports, no `from foo import *`, no `from __future__ import annotations`
+- All imports at module level, no unused imports, no `from foo import *`, no `from __future__ import annotations`, no `if TYPE_CHECKING:` blocks
 - Regression test included for bug fixes
 - Pre-commit hooks pass: `uv run pre-commit run --all-files` (no `--no-verify`, no `SKIP=<hook>`)
 - SOLID compliance (see "SOLID Principles — Mandatory" section): SRP, OCP, LSP, ISP, DIP all checked
