@@ -127,7 +127,15 @@ from ..domain.models import MyModel        # WRONG — never use parent-relative
 
 ### No lazy imports
 
-All imports must be at the top of the file. Never import inside functions, methods, `if` blocks, or any other conditional/deferred context.
+All imports must be at the top of the file. Never import inside functions, methods, `if` blocks, `if TYPE_CHECKING` blocks, or any other conditional/deferred context.
+
+### No wildcard imports
+
+`from foo import *` is banned. Every import must name its symbols explicitly. Wildcard imports hide the source of names, break `grep`-based navigation, and cause spurious shadowing when the upstream module adds new exports.
+
+### No `from __future__ import annotations` in Python 3.13+
+
+Python 3.13 is the project baseline. Annotations already work for modern syntax (`list[str] | None`, `X | None`) without the future import. Remove `from __future__ import annotations` when you see it. For the rare self-referential TypedDict / dataclass case, use an inline string forward ref (`content: "list[ADFNode] | None"`) instead of re-enabling PEP 563 globally.
 
 ### Always type-annotate class `__init__` attributes
 
@@ -186,6 +194,73 @@ class ProcessResult:
     def __post_init__(self) -> None:
         assert self.value >= 0
 ```
+
+### TypedDict rules — JSON shape discipline
+
+For JSON-shaped data that must remain a `dict` (API responses, request payloads, config files, cross-process messages), use a named `TypedDict` — never `dict[str, object]`, `dict[str, Any]`, or `Mapping[str, object]`. A named TypedDict gives pyright a real shape to check; `dict[str, object]` gives it nothing.
+
+**Every TypedDict field is key-required.** Fields that may be null use `X | None` as the value type — the KEY is always present, the VALUE may be null. Callers read them via `.get()` or `isinstance`-narrow.
+
+```python
+# CORRECT — named shape, all fields key-required, nullable via X | None
+from typing import TypedDict
+
+class JiraIssueFields(TypedDict):
+    summary: str | None
+    assignee: JiraUser | None
+    priority: JiraPriority | None
+
+class JiraIssueResponse(TypedDict):
+    key: str
+    id: str
+    fields: JiraIssueFields
+```
+
+```python
+# WRONG — untyped dict in a signature
+def get_issue(key: str) -> dict[str, object]: ...
+
+# WRONG — NotRequired used to make a field optional at key level
+from typing import NotRequired
+class Foo(TypedDict):
+    always: str
+    maybe: NotRequired[str]   # BANNED — use `maybe: str | None`
+
+# WRONG — total=False makes every field NotRequired
+class Foo(TypedDict, total=False):  # BANNED
+    always: str
+```
+
+**Construct TypedDicts via the constructor, not cast-from-dict-literal.** The constructor form forces pyright to verify every required field is provided; `cast` is a type lie that can silently omit fields.
+
+```python
+# CORRECT — constructor; every required field spelled out
+node = ADFNode(type="text", version=None, content=None, text="hi", marks=None)
+
+# WRONG — cast hides missing required fields
+from typing import cast
+node = cast(ADFNode, {"type": "text", "text": "hi"})   # BANNED
+```
+
+**Cast only at JSON seams, using the bare type (no string forward refs).** Cast the result of `response.json()` immediately, on the same line it returns. Never let untyped JSON propagate past the seam — callers cannot narrow `Any`.
+
+```python
+# CORRECT — cast immediately after response.json(), bare type
+body = cast(JiraIssueResponse, response.json())
+
+# WRONG — string forward ref (Python 3.13 resolves the type at runtime)
+body = cast("JiraIssueResponse", response.json())
+
+# WRONG — let Any propagate; callers can't narrow
+def fetch() -> Any:
+    return response.json()
+```
+
+**No `from __future__ import annotations` in Python 3.13+.** Remove it when you see it. For self-referential TypedDicts, use an inline string forward ref: `content: "list[ADFNode] | None"` inside the class body.
+
+**For recursive tree walkers of unknown-depth JSON** (ADF nodes, arbitrary YAML, discriminated unions Python can't statically express), keep the parameter typed as `object` and narrow with `isinstance` inside the walker. Don't force a TypedDict on a shape you can't statically know — you'll end up casting-and-praying, which is worse than owning the narrowing.
+
+**Design check before committing to a TypedDict:** draft the three most common constructor calls. If more than half the fields are `None` in that draft, either the schema is too wide or it should be split into per-variant TypedDicts joined by a union.
 
 ### Protocol-based polymorphism
 
@@ -445,6 +520,85 @@ Add to the standard review checklist (see "Code Review Checklist" below):
 - [ ] **ISP** — are interfaces minimal? No client forced to depend on methods it doesn't use.
 - [ ] **DIP** — do services depend on `Protocol` abstractions, with concretions injected at the composition root?
 
+## Refactor Discipline — Mandatory
+
+A refactor is a change that preserves behavior while improving a measurable property (LOC, complexity, type safety, test coverage, performance). These rules exist because **"simpler" is a claim that must be backed by evidence**, not a vibe.
+
+### Pin the contract before refactoring
+
+Before any refactor that touches a consumed surface — public API, CLI, exit codes, return shapes, stderr text, external message formats, anything a caller branches on — write functional tests that capture the **current observed behavior**, not the intended behavior. Land them as a separate commit BEFORE touching the code under refactor.
+
+```bash
+# Step 0 of every refactor: pin the contract
+git checkout -b refactor/foo
+# Write contract tests that pin observed behavior
+just test   # all green
+git commit -m "test: pin <surface> contract"
+# Only NOW start the actual refactor
+```
+
+Every iteration's verification gate runs the contract tests. A refactor that breaks a contract test is rejected on the spot, not justified with a prose explanation.
+
+### Measure the metric you're selling
+
+If a refactor is sold as "simpler", "smaller", "faster", or "more maintainable", measure that metric at **every iteration**, not just at the end.
+
+```bash
+wc -l src/**/*.py            # before any iteration
+wc -l src/**/*.py            # after each iteration — compare to baseline
+```
+
+If the metric moves the wrong direction, **name the trade-off upfront** and get explicit sign-off before continuing. A refactor that silently grows LOC by 30 % while the author talks about "cleaner structure" is a process failure, even if every individual change is defensible. When growing LOC is the correct call (e.g. trading brevity for type safety), say so in the commit message: `+N lines, traded brevity for X`.
+
+### Extract only when the helper is smaller than the duplication
+
+Before extracting a shared helper, compute the ROI:
+
+```
+helper_size_lines  <  per_site_duplication_lines  ×  number_of_sites
+```
+
+Example: three call sites each duplicate 5 lines = 15 lines of duplication. A 40-line shared helper is a **25-line loss** even though it "removes duplication". Keep the duplication unless the helper pays for itself at today's call-site count — not at hypothetical future call sites.
+
+### Preserve defensive fallbacks
+
+When the old code has a defensive branch (`if isinstance(x, int) else fallback`, `.get(key) or default`, `try/except SpecificError: return sentinel`), preserve **every branch** in the refactor — not just the happy path.
+
+```python
+# WRONG — "equivalent" refactor collapses the fallback
+def _extract_total(body: Response) -> int:
+    return body["meta"]["page"]["total_count"]   # KeyErrors on real wire data
+
+# CORRECT — every old branch survives
+def _extract_total(body: Response, fallback: int) -> int:
+    meta = body.get("meta")
+    if meta is None:
+        return fallback
+    page = meta.get("page")
+    if page is None:
+        return fallback
+    total = page.get("total_count")
+    if total is None:
+        return fallback
+    return total
+```
+
+The old fallbacks exist for reasons you cannot see from inside the refactor. Adversarial review (next rule) is the backup when you're wrong about which branches are unreachable.
+
+### Adversarial review per iteration, not once at the end
+
+After every iteration's verification gate passes, run an adversarial review from an agent that did NOT write the code — Codex, a second Claude session, or a human reviewer. Findings are to-fix items, not suggestions. Ignore only with a written reason in the commit message.
+
+Reviewing once at the end misses regressions that stacked across iterations. Per-iteration review catches them while the change is still small enough to revert cheaply.
+
+### Never skip the verification gate
+
+`just lint && just typecheck && just test` must all pass on the current working tree before every commit. **Never** use `--no-verify`, `git commit --no-verify`, `SKIP=<hook>`, or any other bypass. If a pre-commit hook fails, fix the root cause — don't route around it.
+
+### Present alternatives at the plan stage
+
+When a refactor has two reasonable directions (e.g. "shared helper vs. inline at each site", "TypedDict vs. Protocol", "per-kind union vs. single shape"), present BOTH at the plan stage and let the user pick. Don't commit to a direction unilaterally. Guessing costs 30 minutes of rework when the user disagrees; asking costs 10 seconds.
+
 ## Code Review Checklist
 
 Before submitting a PR, verify:
@@ -452,10 +606,13 @@ Before submitting a PR, verify:
 - All function signatures have type annotations (no `Any` unless justified)
 - Internal methods prefixed with `_`
 - No `print()` statements (use logging)
-- All imports at module level, no unused imports
+- All imports at module level, no unused imports, no `from foo import *`, no `from __future__ import annotations`
 - Regression test included for bug fixes
-- Pre-commit hooks pass: `uv run pre-commit run --all-files`
+- Pre-commit hooks pass: `uv run pre-commit run --all-files` (no `--no-verify`, no `SKIP=<hook>`)
 - SOLID compliance (see "SOLID Principles — Mandatory" section): SRP, OCP, LSP, ISP, DIP all checked
+- **TypedDict discipline** — no `dict[str, object]` / `dict[str, Any]` / `Mapping[str, object]`, no `NotRequired[X]`, no `total=False`, no `cast(Type, {...})`; JSON casts at the seam with bare type names
+- **Test construction** — no tautological tests (isinstance-after-construction, callable-on-def, parametrize-over-self, `inspect.signature` existence checks); CLI tests go through `CliRunner.invoke`
+- **Refactor discipline** — contract tests pinned before any public-surface change; LOC / complexity measured before and after; helper-extraction ROI verified (helper_size < duplication × sites); defensive fallbacks preserved from the old code
 
 ## Codex Policy — Claude + Codex Agent Routing
 
@@ -545,6 +702,66 @@ Follow the existing layer pattern:
 - `domain/` — Pydantic models and domain types
 - `core/` — configuration, middleware, shared utilities
 
+### CLI shared error boundary
+
+Every CLI entry point funnels through one shared `run_cli(fn, handlers)` helper that maps exceptions to exit codes and stderr messages. Each CLI defines a handler list; its `main` is `sys.exit(run_cli(_work, _HANDLERS))`. No hand-written `try/except` ladder per CLI.
+
+```python
+# src/_cli_errors.py — shared, imported by every CLI
+from collections.abc import Callable
+from dataclasses import dataclass
+import click
+
+@dataclass(frozen=True)
+class CliErrorHandler:
+    exc_type: type[BaseException]
+    exit_code: int
+    hint: str | None
+    message_fn: Callable[[BaseException], str] | None = None
+
+def run_cli(fn: Callable[[], int], handlers: list[CliErrorHandler]) -> int:
+    try:
+        return fn()
+    except BaseException as exc:
+        for handler in handlers:
+            if isinstance(exc, handler.exc_type):
+                body = handler.message_fn(exc) if handler.message_fn else str(exc)
+                click.echo(f"error: {body}", err=True)
+                if handler.hint:
+                    click.echo(f"hint: {handler.hint}", err=True)
+                return handler.exit_code
+        raise   # unhandled — let the framework print a traceback
+```
+
+```python
+# src/fetch_ticket.py — a CLI that uses the shared helper
+import sys
+import click
+import httpx
+from _cli_errors import CliErrorHandler, run_cli
+
+_HANDLERS: list[CliErrorHandler] = [
+    CliErrorHandler(exc_type=LookupError, exit_code=2, hint=None),
+    CliErrorHandler(exc_type=FileNotFoundError, exit_code=1, hint=None),
+    CliErrorHandler(exc_type=httpx.HTTPError, exit_code=1, hint=None),
+]
+
+@click.command()
+@click.argument("ticket_key", type=str)
+def main(ticket_key: str) -> None:
+    def _work() -> int:
+        # business logic here — return the exit code
+        ...
+        return 0
+    sys.exit(run_cli(_work, _HANDLERS))
+```
+
+**Exit codes are part of the public contract** the moment any external caller (skill, script, CI, documentation) branches on them. Pin them in contract tests before refactoring any CLI that produces them. Same for stderr substrings that external tooling matches on.
+
+**Handlers are scanned top-down; the first `isinstance` match wins.** List specific classes before their parents — `ReportFormatError(ValueError)` must come before generic `ValueError`.
+
+**Unhandled exceptions re-raise.** This is intentional: an exception class not in any handler list means someone added a new failure mode without updating the handlers. Failing loudly is better than silently returning exit 1.
+
 ## Commit Message Format
 
 Use imperative mood. Lead with root cause. Reference issue/PR if applicable.
@@ -600,6 +817,45 @@ Semantic versioning (`vMAJOR.MINOR.PATCH`). Tag after every commit using `just t
 - Test markers: `slow`, `integration`, `unit`
 - Run specific tests: `uv run pytest tests -k test_name`
 - Always run full suite before commit: `just test && just lint && just typecheck`
+
+### Test design rules — what a test must prove
+
+Every test must exercise a real code path whose failure would cause a real bug. Before writing a test, answer: **what line of production code would have to break for this test to fail?** If the answer is "none, just a type rename", the test is tautological and must be deleted or rewritten.
+
+**Banned test shapes:**
+
+```python
+# WRONG — isinstance check right after construction is trivially true
+def test_foo_is_foo() -> None:
+    f = Foo(x=1)
+    assert isinstance(f, Foo)   # BANNED — constructor already proves this
+
+# WRONG — callable check on a def-declared function
+def test_fn_is_callable() -> None:
+    assert callable(my_function)   # BANNED — def makes it callable
+
+# WRONG — parametrize over a set and assert membership in the same set
+@pytest.mark.parametrize("status", ["ok", "error"])
+def test_status_in_enum(status: str) -> None:
+    assert status in {"ok", "error"}   # BANNED — tautology
+
+# WRONG — inspect.signature to check a parameter exists
+def test_has_param() -> None:
+    sig = inspect.signature(fn)
+    assert "key" in sig.parameters   # BANNED — call fn(key=...) instead
+
+# WRONG — assert issubclass on a dataclass hierarchy you just defined
+def test_error_is_value_error() -> None:
+    assert issubclass(MyError, ValueError)   # BANNED — class shape, not behavior
+```
+
+**Required test shapes:**
+
+- **CLI tests go through the test runner.** `CliRunner.invoke` (click) or `subprocess.run`. Never bypass to internal helpers. The exit code, stdout, and stderr are the contract — only end-to-end invocation proves it.
+- **Fixtures must match the real wire format** of whatever external API they simulate. Include every field the TypedDict declares (with `None` where null). A fixture that omits a required field is lying about what the cast accepts.
+- **Mock objects used as context managers must configure `__enter__` / `__exit__` explicitly.** `mock.__enter__.return_value = mock` — otherwise `with fake as inner:` yields a different mock than the one the test configured.
+- **Before monkeypatching, trace the execution order inside the target function.** A guard injected at call position 2 doesn't catch things that happen at position 3+. Read the source of the function under test before writing the patch.
+- **Contract tests BEFORE refactor.** See the Refactor Discipline section below — before touching any code that produces exit codes, JSON shapes, stderr phrases, or error messages an external caller branches on, write functional tests that pin the CURRENT observed behavior under its own commit.
 
 ## Security Patterns (Summary)
 
