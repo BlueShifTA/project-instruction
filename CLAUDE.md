@@ -43,6 +43,9 @@ Combined project scaffold and instructional documentation:
 
 ## Template Bootstrap Flow
 
+- **Before anything:** verify RTK is active on the dev laptop: `rtk --version && rtk gain`
+  - RTK is the token-saving CLI proxy — all Bash commands route through it automatically via hook
+  - If missing: see `~/.claude/RTK.md` for install instructions
 - Run `just bootstrap` to rename template placeholders and backend package.
 - Prefer explicit args in automation:
   - `uv run python scripts/bootstrap.py --project-name "My App" --project-slug my-app --python-package my_app --non-interactive`
@@ -63,6 +66,19 @@ After the first successful build and smoke test:
 1. Run `just template-clean`
 2. Remove or replace example routes/components/tests/docs not used by the real project
 3. Update `CLAUDE.md` and `ProjectMap.md` so they describe the real project (not the template)
+
+## Core Coding Principles (Karpathy-inspired)
+
+These 4 principles apply to EVERY coding task. They are not optional.
+
+1. **Think Before Coding** — State assumptions explicitly. Surface tradeoffs. Don't hide confusion — ask before implementing.
+2. **Simplicity First** — Minimum code solving the problem. No speculative features. Ask: "Would a senior engineer say this is overcomplicated?"
+3. **Surgical Changes** — Touch only what you must. Match existing style. No drive-by refactoring. Every changed line traces to the request.
+4. **Goal-Driven Execution** — Define verifiable success criteria before starting. "Fix bug" → "Write failing test, make it pass." Loop until verified.
+
+> **Full rationale and examples:** See [`instruction/reference/CODING_PRINCIPLES.md`](instruction/reference/CODING_PRINCIPLES.md)
+
+---
 
 ## Development Workflow — Test-Driven Development (TDD)
 
@@ -98,300 +114,19 @@ Follow these phases for every change:
 
 ## Python Code Style Rules
 
-### Naming conventions
-
-```python
-snake_case          # Functions, variables, methods
-_private_method     # Internal methods (prefix with _)
-CONSTANT_CASE       # Module constants, enum values
-PascalCase          # Classes, protocols, exceptions
-_PrivateClass       # Internal implementation classes
-snake_case.py       # Module names
-```
-
-### Import rules: relative within same directory, absolute across modules
-
-Files in the **same directory** must use relative imports (`from .`).
-Files importing from a **different directory** (parent or sibling module) must use absolute imports.
-Never use parent-relative imports (`from ..`).
-
-```python
-# Same directory: use relative imports
-from .example import router          # CORRECT
-from package.api.example import router  # WRONG — same directory, use relative
-
-# Different directory: use absolute imports
-from package.domain.models import MyModel  # CORRECT
-from ..domain.models import MyModel        # WRONG — never use parent-relative (..)
-```
-
-### No lazy imports
-
-All imports must be at the top of the file. Never import inside functions, methods, `if` blocks, `if TYPE_CHECKING` blocks, or any other conditional/deferred context.
-
-### No wildcard imports
-
-`from foo import *` is banned. Every import must name its symbols explicitly. Wildcard imports hide the source of names, break `grep`-based navigation, and cause spurious shadowing when the upstream module adds new exports.
-
-### No `from __future__ import annotations` in Python 3.13+
-
-Python 3.13 is the project baseline. Annotations already work for modern syntax (`list[str] | None`, `X | None`) without the future import. Remove `from __future__ import annotations` when you see it. For the rare self-referential TypedDict / dataclass case, use an inline string forward ref (`content: "list[ADFNode] | None"`) instead of re-enabling PEP 563 globally.
-
-### No `if TYPE_CHECKING:` blocks
-
-`from typing import TYPE_CHECKING` plus an `if TYPE_CHECKING:` guarded import block is banned. Every import is a real, unconditional, top-level import. The two reasons people reach for `TYPE_CHECKING` both have better fixes:
-
-- **"It breaks a circular import."** Then the module graph is wrong. Move the shared type into a leaf module (a `_types.py`, a domain `models.py`, a `config.py`) that both sides depend on. A `TYPE_CHECKING` block hides the cycle from the interpreter without fixing the architectural mistake — and it forces every reader to mentally evaluate "is this name actually defined at runtime?" forever after.
-- **"The import is heavy and only needed for annotations."** Pay the import cost or restructure. Module-load-time micro-optimisations are not worth a forked import graph that behaves differently at type-check time vs. runtime.
-
-`TYPE_CHECKING` also pairs badly with the no-`from __future__ import annotations` rule: under PEP 563 the strings get resolved lazily, but without it every annotation is evaluated at class-body / function-def time and a `TYPE_CHECKING`-only import becomes a `NameError` waiting to happen. Just import the symbol normally.
-
-```python
-# WRONG
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from .jira_client import JiraClient   # hides a cycle, fails at runtime if used
-
-def handle(client: "JiraClient") -> None: ...
-
-# CORRECT — extract shared types to a leaf module both sides import
-from .jira_types import JiraClient        # always real, always at top
-
-def handle(client: JiraClient) -> None: ...
-```
-
-### Always type-annotate class `__init__` attributes
-
-Every `__init__` parameter and every instance attribute assignment must have explicit type annotations. The return type must be `-> None`. Use modern union syntax: `list[str] | None` (Python 3.10+). Avoid `Any` unless truly necessary.
-
-```python
-# CORRECT
-class Foo:
-    def __init__(self, num: int, name: str) -> None:
-        self.num: int = num
-        self.name: str = name
-
-# WRONG — missing attribute annotations and return type
-class Foo:
-    def __init__(self, num, name):
-        self.num = num
-        self.name = name
-```
-
-### No module-level global instances
-
-Never instantiate a class at module level. Instantiate inside other classes, functions, or use a singleton pattern if truly needed.
-
-**Exception:** FastAPI `app = create_app()` at module level is permitted as it is required by ASGI servers.
-
-```python
-foo = Foo()  # WRONG — module-level global
-
-class Boo:
-    def __init__(self) -> None:
-        self.foo: Foo = Foo()  # CORRECT — inside a class
-
-def main() -> None:
-    foo = Foo()  # CORRECT — inside a function
-```
-
-### Dataclass-first design
-
-Prefer `@dataclasses.dataclass` for data structures. Use frozen dataclasses when immutable. Validate in `__post_init__`. Group related constants in a dataclass instead of scattering magic numbers.
-
-```python
-import dataclasses as dc
-
-@dc.dataclass(frozen=True)
-class AppConfig:
-    host: str = "127.0.0.1"
-    port: int = 8000
-    max_retries: int = 3
-    retry_delay: float = 1.0
-
-@dc.dataclass
-class ProcessResult:
-    value: float
-    status: str
-
-    def __post_init__(self) -> None:
-        assert self.value >= 0
-```
-
-### TypedDict rules — JSON shape discipline
-
-For JSON-shaped data that must remain a `dict` (API responses, request payloads, config files, cross-process messages), use a named `TypedDict` — never `dict[str, object]`, `dict[str, Any]`, or `Mapping[str, object]`. A named TypedDict gives pyright a real shape to check; `dict[str, object]` gives it nothing.
-
-**Every TypedDict field is key-required.** Fields that may be null use `X | None` as the value type — the KEY is always present, the VALUE may be null. Callers read them via `.get()` or `isinstance`-narrow.
-
-```python
-# CORRECT — named shape, all fields key-required, nullable via X | None
-from typing import TypedDict
-
-class JiraIssueFields(TypedDict):
-    summary: str | None
-    assignee: JiraUser | None
-    priority: JiraPriority | None
-
-class JiraIssueResponse(TypedDict):
-    key: str
-    id: str
-    fields: JiraIssueFields
-```
-
-```python
-# WRONG — untyped dict in a signature
-def get_issue(key: str) -> dict[str, object]: ...
-
-# WRONG — NotRequired used to make a field optional at key level
-from typing import NotRequired
-class Foo(TypedDict):
-    always: str
-    maybe: NotRequired[str]   # BANNED — use `maybe: str | None`
-
-# WRONG — total=False makes every field NotRequired
-class Foo(TypedDict, total=False):  # BANNED
-    always: str
-```
-
-**Construct TypedDicts via the constructor, not cast-from-dict-literal.** The constructor form forces pyright to verify every required field is provided; `cast` is a type lie that can silently omit fields.
-
-```python
-# CORRECT — constructor; every required field spelled out
-node = ADFNode(type="text", version=None, content=None, text="hi", marks=None)
-
-# WRONG — cast hides missing required fields
-from typing import cast
-node = cast(ADFNode, {"type": "text", "text": "hi"})   # BANNED
-```
-
-**Cast only at JSON seams, using the bare type (no string forward refs).** Cast the result of `response.json()` immediately, on the same line it returns. Never let untyped JSON propagate past the seam — callers cannot narrow `Any`.
-
-```python
-# CORRECT — cast immediately after response.json(), bare type
-body = cast(JiraIssueResponse, response.json())
-
-# WRONG — string forward ref (Python 3.13 resolves the type at runtime)
-body = cast("JiraIssueResponse", response.json())
-
-# WRONG — let Any propagate; callers can't narrow
-def fetch() -> Any:
-    return response.json()
-```
-
-**No `from __future__ import annotations` in Python 3.13+.** Remove it when you see it. For self-referential TypedDicts, use an inline string forward ref: `content: "list[ADFNode] | None"` inside the class body.
-
-**No `if TYPE_CHECKING:` import blocks.** A `TYPE_CHECKING` guard is a smell that the module graph has a cycle the architecture isn't admitting. Move the shared TypedDict / dataclass into a leaf module both sides import, and keep all imports unconditional at the top of the file. See the import rules section above for the full rationale.
-
-**For recursive tree walkers of unknown-depth JSON** (ADF nodes, arbitrary YAML, discriminated unions Python can't statically express), keep the parameter typed as `object` and narrow with `isinstance` inside the walker. Don't force a TypedDict on a shape you can't statically know — you'll end up casting-and-praying, which is worse than owning the narrowing.
-
-**Design check before committing to a TypedDict:** draft the three most common constructor calls. If more than half the fields are `None` in that draft, either the schema is too wide or it should be split into per-variant TypedDicts joined by a union.
-
-### Protocol-based polymorphism
-
-Use `typing.Protocol` for interfaces instead of abstract base classes. This provides type safety without tight coupling.
-
-```python
-import typing as tp
-
-class StorageBackend(tp.Protocol):
-    async def read(self, key: str) -> bytes: ...
-    async def write(self, key: str, data: bytes) -> None: ...
-
-def process_data(storage: StorageBackend) -> None:
-    # Any class implementing read/write will satisfy this
-    ...
-```
-
-### Async-first for I/O
-
-Use `async`/`await` for all I/O operations (network, file, database). Use `asyncio.sleep()` for delays, never blocking `time.sleep()`. Use context managers for resource cleanup.
-
-```python
-async def fetch_data(url: str) -> dict[str, str]:
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
-        return response.json()
-```
-
-### Retry pattern for unreliable operations
-
-Wrap network calls and external API interactions with retry logic using exponential backoff.
-
-```python
-import asyncio
-import logging
-
-logger = logging.getLogger(__name__)
-
-async def fetch_with_retry(
-    url: str,
-    max_attempts: int = 3,
-    base_delay: float = 1.0,
-) -> dict[str, str]:
-    for attempt in range(1, max_attempts + 1):
-        try:
-            return await fetch_data(url)
-        except (TimeoutError, ConnectionError) as exc:
-            if attempt == max_attempts:
-                raise
-            delay = base_delay * (2 ** (attempt - 1))
-            logger.warning("Attempt %d/%d failed: %s, retrying in %.1fs", attempt, max_attempts, exc, delay)
-            await asyncio.sleep(delay)
-    raise RuntimeError("Unreachable")
-```
-
-### Logging over print
-
-Never use `print()` in production code. Use the `logging` module. Log with `exc_info=True` when catching exceptions.
-
-```python
-import logging
-
-logger = logging.getLogger(__name__)
-
-logger.info("Processing request %s", request_id)
-logger.warning("Slow response: %.2fs", elapsed)
-logger.error("Failed to connect", exc_info=True)
-```
-
-### Exception handling: no blind except, log before swallowing
-
-Never catch `Exception` or `BaseException` silently. Allowed patterns:
-
-```python
-# CORRECT — re-raise after logging
-try:
-    result = await fetch()
-except Exception:
-    logger.error("Unexpected error", exc_info=True)
-    raise
-
-# CORRECT — log with exc_info=True (only when you truly need to swallow)
-try:
-    result = await fetch()
-except Exception:
-    logger.exception("Failed to fetch, continuing")
-
-# PREFERRED — catch specific exceptions
-try:
-    result = await fetch()
-except TimeoutError as exc:
-    logger.warning("Timeout: %s", exc, exc_info=True)
-    raise
-```
-
-Enforced by ruff rules `BLE001` (blind-except) and `TRY` (exception handling patterns).
-
-### Ruff rules enforced
-
-```
-select = ["E", "W", "F", "I", "B", "C4", "UP", "ARG", "SIM", "TID", "N", "RUF",
-          "ASYNC", "TRY", "BLE", "RET", "LOG", "DTZ"]
-ignore = ["E501", "TRY003"]
-```
-
-Parent-relative imports (`from ..`) are banned via `ban-relative-imports = "parents"` in `[tool.ruff.lint.flake8-tidy-imports]`.
+> **Full reference:** [`instruction/reference/PYTHON_STYLE.md`](instruction/reference/PYTHON_STYLE.md)
+
+**Enforced rules (summary):**
+- `snake_case` functions/vars, `PascalCase` classes, `CONSTANT_CASE` module constants, `_private` prefix for internal
+- Relative imports within the same directory; absolute imports across modules; no `from ..` parent-relative imports
+- All imports at file top — no lazy, no wildcard, no `from __future__ import annotations`, no `if TYPE_CHECKING:` blocks
+- Every `__init__` parameter and attribute must be type-annotated; return type `-> None`
+- No module-level *mutable service instances* (DB clients, API clients, etc.); module constants (`ROOT = Path(...)`, `logger = getLogger(...)`) and `app = create_app()` for ASGI are permitted
+- Prefer `@dataclass` for data structures; `TypedDict` for JSON shapes (all fields key-required, `X | None` for nullable)
+- `typing.Protocol` for interfaces, not ABCs
+- `async`/`await` for all I/O; `asyncio.sleep()` not `time.sleep()`
+- `logging` not `print()`; never silent `except Exception`; catch specific exceptions
+- Ruff: `select = ["E","W","F","I","B","C4","UP","ARG","SIM","TID","N","RUF","ASYNC","TRY","BLE","RET","LOG","DTZ"]`, `ignore = ["E501","TRY003"]`
 
 ## SOLID Principles — Mandatory
 
@@ -702,90 +437,14 @@ codex login
 
 ## Architecture & Scaling Patterns
 
-### Middleware ordering
+> **Full reference:** [`instruction/reference/FASTAPI_PATTERNS.md`](instruction/reference/FASTAPI_PATTERNS.md)
 
-Middleware runs in reverse registration order. Register outermost (first-to-run) middleware first:
-1. `RequestIDMiddleware` — attach request ID for log tracing
-2. `RequestSizeLimitMiddleware` — reject oversized payloads before parsing
-3. `CORSMiddleware` — handle cross-origin requests
-
-See `projects/backend/package/main.py` for the reference implementation.
-
-### Lifespan resource management
-
-Use FastAPI's `lifespan` context manager for startup/shutdown resources (database pools, thread executors, caches). Resources created in `yield` are cleaned up on shutdown.
-
-### Thread pool sizing
-
-Install a bounded `ThreadPoolExecutor` via lifespan to prevent unbounded OS thread spawning under concurrent `run_in_executor` calls. Default: `min(32, cpu_count + 4)`.
-
-### Adding new backend modules
-
-Follow the existing layer pattern:
-- `api/` — route handlers (thin, delegate to services)
-- `services/` — business logic
-- `domain/` — Pydantic models and domain types
-- `core/` — configuration, middleware, shared utilities
-
-### CLI shared error boundary
-
-Every CLI entry point funnels through one shared `run_cli(fn, handlers)` helper that maps exceptions to exit codes and stderr messages. Each CLI defines a handler list; its `main` is `sys.exit(run_cli(_work, _HANDLERS))`. No hand-written `try/except` ladder per CLI.
-
-```python
-# src/_cli_errors.py — shared, imported by every CLI
-from collections.abc import Callable
-from dataclasses import dataclass
-import click
-
-@dataclass(frozen=True)
-class CliErrorHandler:
-    exc_type: type[BaseException]
-    exit_code: int
-    hint: str | None
-    message_fn: Callable[[BaseException], str] | None = None
-
-def run_cli(fn: Callable[[], int], handlers: list[CliErrorHandler]) -> int:
-    try:
-        return fn()
-    except BaseException as exc:
-        for handler in handlers:
-            if isinstance(exc, handler.exc_type):
-                body = handler.message_fn(exc) if handler.message_fn else str(exc)
-                click.echo(f"error: {body}", err=True)
-                if handler.hint:
-                    click.echo(f"hint: {handler.hint}", err=True)
-                return handler.exit_code
-        raise   # unhandled — let the framework print a traceback
-```
-
-```python
-# src/fetch_ticket.py — a CLI that uses the shared helper
-import sys
-import click
-import httpx
-from _cli_errors import CliErrorHandler, run_cli
-
-_HANDLERS: list[CliErrorHandler] = [
-    CliErrorHandler(exc_type=LookupError, exit_code=2, hint=None),
-    CliErrorHandler(exc_type=FileNotFoundError, exit_code=1, hint=None),
-    CliErrorHandler(exc_type=httpx.HTTPError, exit_code=1, hint=None),
-]
-
-@click.command()
-@click.argument("ticket_key", type=str)
-def main(ticket_key: str) -> None:
-    def _work() -> int:
-        # business logic here — return the exit code
-        ...
-        return 0
-    sys.exit(run_cli(_work, _HANDLERS))
-```
-
-**Exit codes are part of the public contract** the moment any external caller (skill, script, CI, documentation) branches on them. Pin them in contract tests before refactoring any CLI that produces them. Same for stderr substrings that external tooling matches on.
-
-**Handlers are scanned top-down; the first `isinstance` match wins.** List specific classes before their parents — `ReportFormatError(ValueError)` must come before generic `ValueError`.
-
-**Unhandled exceptions re-raise.** This is intentional: an exception class not in any handler list means someone added a new failure mode without updating the handlers. Failing loudly is better than silently returning exit 1.
+**Enforced patterns (summary):**
+- Middleware registers outermost-first: `RequestIDMiddleware` → `RequestSizeLimitMiddleware` → `CORSMiddleware` (runs innermost-first at request time)
+- Use FastAPI `lifespan` for startup/shutdown resources (DB pools, thread executors, caches)
+- Bounded `ThreadPoolExecutor` via lifespan: `min(32, cpu_count + 4)` — prevents unbounded thread spawning
+- Layer pattern: `api/` (thin handlers) → `services/` (business logic) → `domain/` (Pydantic models) → `core/` (config, middleware)
+- All CLIs use a shared `run_cli(fn, handlers)` error boundary — no per-CLI `try/except` ladders; exit codes are public contract
 
 ## Commit Message Format
 
@@ -914,5 +573,13 @@ Role-based templates, coding profiles, and reference materials live in `instruct
 - **Role templates** (`instruction/templates/`): Systems architect, backend/frontend engineer, code review, DevOps, PM, communication
 - **Coding profiles** (`instruction/profiles/coding-profiles/`): Data, frontend, Next.js, fullstack, reliability, systems engineer
 - **Guides** (`instruction/guides/`): Getting started scenarios, solo workflow, work cycle, quality automation, quickstart
-- **Reference** (`instruction/reference/`): Checklists, security patterns, agentic AI architectures, audit templates, code style analysis
-- **Example profile** (`instruction/profiles/surapat/`): Personal coding profile demonstrating how to document individual preferences
+- **Reference** (`instruction/reference/`):
+  - [`CODING_PRINCIPLES.md`](instruction/reference/CODING_PRINCIPLES.md) — Karpathy-inspired behavioral guidelines
+  - [`PYTHON_STYLE.md`](instruction/reference/PYTHON_STYLE.md) — full Python style rules (naming, imports, typing, ruff)
+  - [`FASTAPI_PATTERNS.md`](instruction/reference/FASTAPI_PATTERNS.md) — FastAPI middleware, lifespan, CLI patterns
+  - [`SOLID_PRINCIPLES.md`](instruction/reference/SOLID_PRINCIPLES.md) — extended SOLID examples and testing guidance
+  - [`SECURITY_PATTERNS.md`](instruction/reference/SECURITY_PATTERNS.md) — network, input, data, LLM, agent safety
+  - [`CHECKLIST.md`](instruction/reference/CHECKLIST.md) — quarterly team audit scorecard
+  - [`AGENTIC_AI_ARCHITECTURES.md`](instruction/reference/AGENTIC_AI_ARCHITECTURES.md) — multi-agent design patterns
+  - [`PATTERNS.md`](instruction/reference/PATTERNS.md), [`STRUCTURE.md`](instruction/reference/STRUCTURE.md), [`AUDIT_TEMPLATE.md`](instruction/reference/AUDIT_TEMPLATE.md), [`CODE_STYLE_ANALYSIS.md`](instruction/reference/CODE_STYLE_ANALYSIS.md)
+- **Example profile** (`instruction/profiles/surapat/`): Personal coding profile — **replace or delete after bootstrapping** (`just template-clean` will remind you)

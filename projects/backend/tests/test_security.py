@@ -9,8 +9,6 @@ Tests cover:
 - General security hygiene (no server version leak, clean 404s, content-type handling)
 """
 
-from __future__ import annotations
-
 from fastapi.testclient import TestClient
 
 from package.core.config import get_settings

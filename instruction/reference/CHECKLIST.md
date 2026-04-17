@@ -271,7 +271,7 @@ Use this checklist to audit whether your team is following the instructional sca
 
 **2.5-3.4:** 🟡 Fair — Multiple gaps. Address top 3 scoring sections.
 
-**1.5-2.4:** 🟡 Risky — Chaos is likely. Implement MASTER_PLAYBOOK immediately.
+**1.5-2.4:** 🟡 Risky — Chaos is likely. Implement governance from `../README.md` + core role templates immediately.
 
 **<1.5:** 🔴 Critical — Team needs foundation work. Start with Scenario 1 or 5 in `0-getting-started.md`.
 

@@ -5,7 +5,7 @@
 
 ---
 
-## Why SOLID Matters for ArmLab
+## Why SOLID Matters for This Stack
 
 Our stack (FastAPI + Next.js + multi-agent orchestration) has three scaling pressures that SOLID directly addresses:
 
@@ -436,3 +436,10 @@ async def test_dashboard_with_in_memory_repo():
 | **L**SP | Subtypes = drop-in | `NotImplementedError` | Honor full contract |
 | **I**SP | Small interfaces | "Fat Protocol" | Split Protocol |
 | **D**IP | Inject, don't create | `self.x = Concrete()` | Constructor injection |
+
+## See also
+
+- Root [`CLAUDE.md`](../../CLAUDE.md) § "SOLID Principles — Mandatory" — authoritative rules
+- [`CODING_PRINCIPLES.md`](CODING_PRINCIPLES.md) — Karpathy-inspired behavioral guidelines
+- [`PATTERNS.md`](PATTERNS.md) — engineering behavioral and technical patterns
+- [`CHECKLIST.md`](CHECKLIST.md) — quarterly audit scorecard

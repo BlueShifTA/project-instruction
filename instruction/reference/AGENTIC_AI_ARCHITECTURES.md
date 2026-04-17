@@ -478,9 +478,9 @@ Sources: [Nature npj Digital Medicine — Regulation of Clinical AI](https://www
 
 ---
 
-## 8. ArmLab Consulting Framework
+## 8. Consulting Framework
 
-### Assessing a client's agentic architecture in 2–4 days
+### Assessing an agentic architecture in 2–4 days
 
 **Day 1: Discovery (half day + async review)**
 

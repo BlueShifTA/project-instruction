@@ -58,6 +58,7 @@ select = [
     "RET",   # return statement consistency
     "LOG",   # logging best practices
     "DTZ",   # datetime timezone awareness
+    "T20",   # ban print() in production code
 ]
 ignore = [
     "E501",    # line too long (handled by formatter)
@@ -83,7 +84,7 @@ exclude = [
     ".venv",
 ]
 pythonVersion = "3.13"
-typeCheckingMode = "basic"
+typeCheckingMode = "standard"
 reportMissingImports = true
 reportMissingTypeStubs = false
 
@@ -96,6 +97,7 @@ addopts = [
     "--cov=projects/backend/package",
     "--cov-report=term-missing",
     "--cov-report=html",
+    "--cov-fail-under=80",
     "--verbose",
 ]
 

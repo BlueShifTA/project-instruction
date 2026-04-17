@@ -6,13 +6,13 @@ Single source of truth for starting new projects with selected agents and projec
 
 - **Runnable template:** FastAPI backend + Next.js frontend with CI, pre-commit, and dev tooling
 - **Instructional docs:** Role-based templates, coding profiles, workflow guides, and reference materials (`instruction/`)
-- **Unified coding rules:** Single `CLAUDE.md` with all code style, testing, and commit conventions
+- **Unified coding rules:** `CLAUDE.md` as the enforced-rules entrypoint, with detailed references in `instruction/reference/`
 
 ## Project Structure
 
 ```text
 project-instruction/
-├── CLAUDE.md                     # Unified coding rules (single source of truth)
+├── CLAUDE.md                     # Enforced coding rules entrypoint (links to instruction/reference/ for detail)
 ├── ProjectMap.md                 # Generated fast search map
 ├── justfile                      # Root automation commands
 ├── pyproject.toml                # Python workspace config

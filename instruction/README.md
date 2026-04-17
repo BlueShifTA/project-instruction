@@ -14,8 +14,8 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 | Code examples | `profiles/coding-profiles/[role].md` | 20 min |
 | Team workflow | `guides/SOLO_WORKFLOW.md` | 30 min |
 | Quick audit | `reference/CHECKLIST.md` | 10 min |
-| Example profile | `profiles/surapat/PROFILE.md` | 20 min |
-| Decision rules | `profiles/surapat/DECISIONS.md` | 15 min |
+| Example profile *(replace with yours)* | `profiles/surapat/PROFILE.md` | 20 min |
+| Decision rules example *(replace with yours)* | `profiles/surapat/DECISIONS.md` | 15 min |
 | Team scenarios | `guides/0-getting-started.md` | 45 min |
 
 ---
@@ -36,10 +36,10 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 
 | Role | Primary File | Secondary |
 |------|-------------|-----------|
-| Systems Architect | `templates/1-systems-architect.md` | `profiles/surapat/DECISIONS.md` |
+| Systems Architect | `templates/1-systems-architect.md` | `profiles/surapat/DECISIONS.md` *(example — replace)* |
 | Engineering Manager | `templates/8-communication-decision-making.md` | `guides/0-getting-started.md` |
 | Product Manager | `templates/7-product-manager.md` | `guides/WORK_CYCLE.md` |
-| Tech Lead | `templates/5-code-review-standards.md` | `profiles/surapat/PROFILE.md` |
+| Tech Lead | `templates/5-code-review-standards.md` | `profiles/surapat/PROFILE.md` *(example — replace)* |
 
 ---
 
@@ -59,13 +59,13 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 | Team not aligned | `templates/8-communication-decision-making.md` | 1 week |
 | Code quality issues | `guides/PHASE_5_AUTO_QUALITY.md` | 2 days |
 | Security gaps | `reference/SECURITY_PATTERNS.md` | 4 hours |
-| Bad architecture decisions | `profiles/surapat/DECISIONS.md` + `reference/AGENTIC_AI_ARCHITECTURES.md` | 3 days |
+| Bad architecture decisions | `profiles/[your-name]/DECISIONS.md` + `reference/AGENTIC_AI_ARCHITECTURES.md` | 3 days |
 
 ---
 
 ## By Topic
 
-- **Architecture & Design:** `templates/1-systems-architect.md`, `profiles/surapat/DECISIONS.md`, `reference/AGENTIC_AI_ARCHITECTURES.md`
+- **Architecture & Design:** `templates/1-systems-architect.md`, `profiles/[your-name]/DECISIONS.md`, `reference/AGENTIC_AI_ARCHITECTURES.md`
 - **Security:** `reference/SECURITY_PATTERNS.md`, `profiles/coding-profiles/systems-engineer.md`, `profiles/coding-profiles/reliability-engineer.md`
 - **Code Quality:** `templates/5-code-review-standards.md`, `guides/PHASE_5_AUTO_QUALITY.md`, `reference/CODE_STYLE_ANALYSIS.md`
 - **Team Management:** `templates/8-communication-decision-making.md`, `guides/WORK_CYCLE.md`, `reference/CHECKLIST.md`
@@ -80,7 +80,7 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 - **Solo founders (2 hours):** `guides/0-getting-started.md` (Scenario 1) -> `guides/SOLO_WORKFLOW.md` -> `guides/PROJECT_QUICKSTART.md`
 - **Engineering managers (4 hours):** `guides/0-getting-started.md` (Scenario 3) -> all `templates/` -> `reference/CHECKLIST.md` monthly
 - **New team members (1 week):** `guides/0-getting-started.md` (Scenario 2) -> your role template -> your coding profile
-- **Architects (8 hours):** `templates/1-systems-architect.md` -> `profiles/surapat/DECISIONS.md` -> `reference/AGENTIC_AI_ARCHITECTURES.md`
+- **Architects (8 hours):** `templates/1-systems-architect.md` -> `profiles/[your-name]/DECISIONS.md` -> `reference/AGENTIC_AI_ARCHITECTURES.md`
 - **Code reviewers (3 hours):** `templates/5-code-review-standards.md` -> all `profiles/coding-profiles/` -> `reference/CODE_STYLE_ANALYSIS.md`
 
 ---
@@ -94,7 +94,7 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 | Code review | `templates/5-code-review-standards.md`, `reference/CODE_STYLE_ANALYSIS.md` |
 | Security | `reference/SECURITY_PATTERNS.md`, `profiles/coding-profiles/systems-engineer.md` |
 | CI/CD | `templates/6-devops-deployment.md`, `guides/PHASE_5_AUTO_QUALITY.md` |
-| Database | `profiles/coding-profiles/data-engineer.md`, `profiles/surapat/DECISIONS.md` |
+| Database | `profiles/coding-profiles/data-engineer.md`, `profiles/[your-name]/DECISIONS.md` |
 | Frontend | `templates/4-frontend-engineer.md`, `profiles/coding-profiles/frontend-engineer.md` |
 | Scaling | `guides/0-getting-started.md`, `templates/1-systems-architect.md` |
 | Testing | `templates/4-frontend-engineer.md`, `guides/PHASE_5_AUTO_QUALITY.md` |
@@ -136,7 +136,7 @@ Skill definitions: `.claude/skills/[name]/SKILL.md`
 ```
 instruction/
 ├── profiles/
-│   ├── surapat/                   # Example personal profile
+│   ├── surapat/                   # Example personal profile — replace/delete after bootstrap
 │   │   ├── PROFILE.md             # Coding style, tools, patterns
 │   │   ├── DECISIONS.md           # Tech decision rules
 │   │   └── WORKFLOWS.md           # Workflow + process

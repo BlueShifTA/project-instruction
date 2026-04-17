@@ -60,3 +60,21 @@ repos:
         entry: bash -lc 'uv run python scripts/check_no_sys_path_mutation.py'
         language: system
         pass_filenames: false
+
+      - id: no-future-annotations
+        name: no-future-annotations
+        entry: bash -lc 'uv run python scripts/check_no_future_annotations.py'
+        language: system
+        pass_filenames: false
+
+      - id: no-type-checking-blocks
+        name: no-type-checking-blocks
+        entry: bash -lc 'uv run python scripts/check_no_type_checking.py'
+        language: system
+        pass_filenames: false
+
+      - id: frontend-typecheck
+        name: frontend-typecheck
+        entry: bash -lc 'cd projects/frontend && pnpm run typecheck'
+        language: system
+        pass_filenames: false

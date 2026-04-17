@@ -10,7 +10,6 @@ This directory contains a comprehensive template system for building and scaling
 
 #### Core Documents
 - **README.md** (6.2 KB) — Quick start guide, concept overview
-- **MASTER_PLAYBOOK.md** (14 KB) — How to use the entire system, growth stages, customization examples
 - **STRUCTURE.md** (this file) — File manifest and organization
 
 #### Role Templates (Engineer + Product)
@@ -153,10 +152,10 @@ Workflow Orchestration (2)
 
 ### For Founders
 ```
-1. Read: README.md (20 min)
-2. Read: MASTER_PLAYBOOK.md (45 min)
-3. Customize: Templates for your stage
-4. Share: Role templates during hiring
+1. Read: ../README.md (20 min — navigation hub)
+2. Pick role templates for your stage
+3. Customize templates for your team
+4. Share role templates during hiring
 ```
 
 ### For Engineering Leaders
@@ -254,7 +253,7 @@ Create these for your team:
 ## Implementation Timeline
 
 ### Week 1: Foundation
-- Read MASTER_PLAYBOOK.md
+- Read ../README.md (navigation hub)
 - Identify your growth stage
 - Select relevant templates
 

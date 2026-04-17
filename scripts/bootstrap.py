@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import argparse
 import pathlib
 import re
@@ -35,14 +33,17 @@ def _iter_target_files(package_name: str) -> list[pathlib.Path]:
     targets = [
         ROOT / "README.md",
         ROOT / "CLAUDE.md",
+        ROOT / "CONTRIBUTING.md",
         ROOT / "ProjectMap.md",
         ROOT / "pyproject.toml",
+        ROOT / "justfile",
+        ROOT / "devops/.pre-commit-config.yaml",
+        ROOT / ".github/workflows/ci.yml",
         ROOT / "projects/frontend/src/app/layout.tsx",
         ROOT / "projects/frontend/src/app/page.tsx",
         ROOT / "projects/backend/pyproject.toml",
         ROOT / "projects/backend/README.md",
         ROOT / "projects/backend/tests/test_example.py",
-        ROOT / "justfile",
     ]
     backend_pkg_dir = ROOT / "projects/backend" / package_name
     if backend_pkg_dir.exists():
@@ -85,6 +86,7 @@ def main() -> int:
         "Minimal Startup Template": f"{project_name} Template",
         "projects/backend/package": f"projects/backend/{package_name}",
         "package.main:app": f"{package_name}.main:app",
+        "from package.main import app": f"from {package_name}.main import app",
     }
     replacements_backend = {
         "from package.": f"from {package_name}.",
@@ -106,6 +108,8 @@ def main() -> int:
             print(f"would update {path.relative_to(ROOT)}")
 
     print("\nNext steps:")
+    print("0. verify RTK is active: rtk --version && rtk gain")
+    print("   (install if missing: see ~/.claude/RTK.md)")
     print("1. just install")
     print("2. just run-backend")
     print("3. just run-frontend")

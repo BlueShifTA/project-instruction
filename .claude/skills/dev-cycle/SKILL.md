@@ -11,7 +11,7 @@ Target path: `$ARGUMENTS` (defaults to project root)
 
 ## Phase 1: Audit (Critic Review)
 
-Spawn a **critic agent** (`subagent_type: read-only`) to review the target path:
+Spawn a **critic agent** (`subagent_type: read-only`, `model: sonnet`) to review the target path:
 
 - Scan for bugs, code smells, type errors, security issues, dead code
 - Classify each issue: **P0** (breaks functionality), **P1** (significant bug/smell), **P2** (minor improvement), **P3** (nit/style)
@@ -29,7 +29,7 @@ Analyze the audit report and group issues into **workstreams by file overlap**:
 
 ## Phase 3: Parallel Fix
 
-Spawn one **fix agent per workstream** (`subagent_type: general`, `bypassPermissions: true`):
+Spawn one **fix agent per workstream** (`subagent_type: general`, `model: sonnet`, `bypassPermissions: true`):
 
 - Each agent receives: its workstream description, issue list, and the exact files it owns
 - Each agent fixes all issues in its workstream, editing only its assigned files
@@ -55,7 +55,7 @@ If any check fails:
 
 ## Phase 5: Final Critic Review
 
-Spawn a fresh **critic agent** (`subagent_type: read-only`) to re-review:
+Spawn a fresh **critic agent** (`subagent_type: read-only`, `model: sonnet`) to re-review:
 
 - Review all changes made during Phase 3 (use `git diff` to scope the review)
 - Apply the same P0-P3 classification

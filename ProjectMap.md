@@ -6,7 +6,7 @@ Fast search map for `project-instruction`.
 
 ```text
 project-instruction/
-├── CLAUDE.md                  # Unified coding rules (single source of truth)
+├── CLAUDE.md                  # Enforced coding rules entrypoint (detail in instruction/reference/)
 ├── ProjectMap.md
 ├── justfile
 ├── pyproject.toml

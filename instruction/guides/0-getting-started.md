@@ -37,7 +37,7 @@ Pick the one that matches your situation. Each includes **exact next steps**.
 **Action Plan (Next 2 Weeks):**
 
 1. **Day 1-2: Understand the System (2 hours)**
-   - Read: `MASTER_PLAYBOOK.md` (overview)
+   - Read: `../README.md` (navigation hub by role/goal)
    - Read: `2-workflow-orchestration.md` (how you should work)
    - Takeaway: You need clarity on "what done looks like"
 
@@ -156,7 +156,7 @@ Once MVP is shipping: Jump to **Scenario 2**
    - **Output:** Save scores to `TEAM_AUDIT_2024.md`
 
 2. **Week 2: Customize Master Playbook (6 hours)**
-   - Use: `MASTER_PLAYBOOK.md` as template
+   - Use: `../README.md` + `../templates/` as your starting point
    - **Action:** Create `OUR_PLAYBOOK.md` with your team:
      - Pick your "stage" (MVP Phase / Post-MVP / Growth)
      - Which templates matter most right now?
@@ -306,8 +306,8 @@ Once MVP is shipping: Jump to **Scenario 2**
 | "Our deploys are scary" | `6-devops-deployment.md` | 2 hours |
 | "Our meetings are chaotic" | `8-communication-decision-making.md` | 1.5 hours |
 | "Our system is a mess" | `1-systems-architect.md` | 2 hours |
-| "We can't find good people" | `MASTER_PLAYBOOK.md` + relevant role templates | 4 hours |
-| "Everything is broken" | `MASTER_PLAYBOOK.md` (full audit) | 8 hours |
+| "We can't find good people" | `../README.md` + relevant role templates | 4 hours |
+| "Everything is broken" | `../reference/CHECKLIST.md` (full audit) | 8 hours |
 
 ---
 
@@ -316,7 +316,7 @@ Once MVP is shipping: Jump to **Scenario 2**
 ```
 START HERE
     ↓
-MASTER_PLAYBOOK.md (overview + growth stages)
+../README.md (role/goal navigation hub)
     ↓
     ├─→ Building a product?  → 7-product-manager.md
     ├─→ Designing systems?   → 1-systems-architect.md

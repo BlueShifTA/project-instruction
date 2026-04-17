@@ -13,8 +13,6 @@ Allowed exception (current repo default):
 - docs/conf.py (Sphinx config currently adjusts sys.path)
 """
 
-from __future__ import annotations
-
 import ast
 from dataclasses import dataclass
 from pathlib import Path
