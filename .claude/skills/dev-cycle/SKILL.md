@@ -9,11 +9,23 @@ Run a complete development cycle: audit the codebase, plan fixes, execute in par
 
 Target path: `$ARGUMENTS` (defaults to project root)
 
+## Agent Roster
+
+| Phase | Agent | Runtime |
+|-------|-------|---------|
+| 1 — Audit | Claude `read-only` sub-agent | Sonnet 4.6, xhigh effort |
+| 2 — Plan | Orchestrator (inline) | — |
+| 3 — Fix | `.claude/agents/code-fixer.md` | Sonnet, one per workstream |
+| 4 — Verify | Bash (`just` commands) | — |
+| 5 — Critic | Codex (`~/node_modules/.bin/codex`) | Adversarial, ephemeral |
+| 6 — Report | Orchestrator (inline) | — |
+
 ## Phase 1: Audit (Critic Review)
 
-Spawn a **critic agent** (`subagent_type: read-only`, `model: sonnet`) to review the target path:
+Spawn a **critic agent** (`subagent_type: read-only`, `model: sonnet`) — claude-sonnet-4-6, xhigh effort — to review the target path exhaustively:
 
-- Scan for bugs, code smells, type errors, security issues, dead code
+- Read every file in the target path; do not skip or summarise — full coverage required
+- Scan for bugs, code smells, type errors, security issues, dead code, SOLID violations, TypedDict misuse, banned import patterns
 - Classify each issue: **P0** (breaks functionality), **P1** (significant bug/smell), **P2** (minor improvement), **P3** (nit/style)
 - Output a structured issues list with file paths, line numbers, and descriptions
 - Save the audit report to a temporary file for Phase 2
@@ -29,11 +41,11 @@ Analyze the audit report and group issues into **workstreams by file overlap**:
 
 ## Phase 3: Parallel Fix
 
-Spawn one **fix agent per workstream** (`subagent_type: general`, `model: sonnet`, `bypassPermissions: true`):
+Spawn one **`code-fixer` agent** (`.claude/agents/code-fixer.md`) per workstream (`bypassPermissions: true`):
 
-- Each agent receives: its workstream description, issue list, and the exact files it owns
-- Each agent fixes all issues in its workstream, editing only its assigned files
-- Agents must NOT touch files outside their workstream
+- Pass each agent: workstream description, full issue list with file:line references, and the exact files it owns
+- Each agent fixes all issues in priority order (P0 → P1 → P2 → P3), editing only its assigned files
+- Agents must NOT touch files outside their workstream — zero overlap is mandatory
 - `bypassPermissions` is required so agents can edit files without approval prompts
 
 Wait for all fix agents to complete before proceeding.
@@ -50,17 +62,19 @@ just typecheck
 
 If any check fails:
 - Identify which workstream's changes caused the failure
-- Spawn a targeted fix agent for those files only
+- Spawn a targeted **`code-fixer` agent** for those files only
 - Re-run verification until all checks pass
 
 ## Phase 5: Final Critic Review
 
-Spawn a fresh **critic agent** (`subagent_type: read-only`, `model: sonnet`) to re-review:
+Run **Codex** as adversarial reviewer via Bash:
 
-- Review all changes made during Phase 3 (use `git diff` to scope the review)
-- Apply the same P0-P3 classification
+```bash
+~/node_modules/.bin/codex exec "Adversarial code review. Review the git diff below and classify every issue P0–P3 (P0=breaks functionality, P1=significant bug/smell, P2=minor, P3=nit). Be hostile — assume the author missed things. Focus on: logic errors, type safety, SOLID violations, security, banned patterns (from __future__ import annotations, if TYPE_CHECKING, print(), module-level mutable instances). Output file:line for every finding.\n\n$(git diff HEAD~1)" --dangerously-bypass-approvals-and-sandbox --ephemeral 2>&1
+```
+
 - If **any P0 issues** are found, loop back to Phase 3 with a new workstream for those issues
-- P1-P3 issues are noted in the report but do not block completion
+- P1–P3 issues are noted in the report but do not block completion
 
 ## Phase 6: Report
 
