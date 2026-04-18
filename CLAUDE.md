@@ -524,24 +524,29 @@ Semantic versioning (`vMAJOR.MINOR.PATCH`). Tag after every commit using `just t
 
 **TDD is mandatory.** Write tests before implementation for every feature, fix, and refactor.
 
+**Functional tests only.** Every test must exercise a real code path through its public interface and assert on observable behavior (return value, HTTP response, rendered DOM text, exit code, side effect). Tests of structure — "component is a function", "class has method X", "the signature accepts parameter Y" — are banned (see "Banned test shapes" below). If a test fails, production code must have broken; if renaming a type can break the test, the test is structural, not functional.
+
+- **Backend** — call the endpoint/function and assert on the response body, status code, or observable side effect (e.g. row in DB, log line, event emitted). Prefer `TestClient` / `CliRunner` / real function invocation over poking internals.
+- **Frontend** — render the component with its real providers (React Query, theme) and assert on the user-facing DOM (text, roles, aria labels). Never assert on state hooks, prop types, or implementation details.
+
 **Test priority order:**
 1. Error paths and edge cases FIRST (these break in production)
 2. Happy path second
-3. Integration tests for established features, unit tests for isolated logic
-4. Regression test required for every bug fix
+3. Regression test required for every bug fix
 
 **Coverage targets:**
 - Core business logic: 95%+ (CRUD, auth, domain models)
 - API routes: 90%+ (all status codes, validation errors, edge cases)
 - Services: 85%+ (including failure modes)
-- Frontend components: test user-facing behavior, not implementation details
+- Frontend components: cover each rendered state (loading, error, success, empty) via DOM assertions
 - **Minimum floor: 80%** — no PR merges below this
 
 **Execution:**
 - Fast tests (no unnecessary sleep)
-- Test markers: `slow`, `integration`, `unit`
-- Run specific tests: `uv run pytest tests -k test_name`
+- Test markers (backend): `slow`, `integration`
+- Run specific tests: `uv run pytest tests -k test_name` (backend), `pnpm run test -- <pattern>` (frontend)
 - Always run full suite before commit: `just test && just lint && just typecheck`
+- `just test` runs both backend (`pytest`) and frontend (`vitest`) — neither is optional
 
 ### Test design rules — what a test must prove
 

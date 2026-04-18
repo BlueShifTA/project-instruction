@@ -20,16 +20,24 @@ Scope defaults to `all` unless specified: `$ARGUMENTS`
 
    **Backend:**
    ```bash
-   just test
+   just test-backend
    just typecheck-python
    just format-check
    ```
 
    **Frontend:**
    ```bash
+   just test-frontend
    just typecheck-frontend
    just lint-frontend
    just format-check
+   ```
+
+   **All:**
+   ```bash
+   just test
+   just typecheck
+   just lint
    ```
 
 3. **On failure:** Read the error output, identify the root cause, and report:

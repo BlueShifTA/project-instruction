@@ -19,7 +19,9 @@
     "prettier": "prettier . --check",
     "prettify": "prettier . --write",
     "prettier:write": "prettier . --write",
-    "prettier:check": "prettier . --check"
+    "prettier:check": "prettier . --check",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -33,18 +35,23 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^22",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@vitejs/plugin-react": "^6.0.1",
     "autoprefixer": "^10.4.21",
+    "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^9",
     "eslint-config-next": "^15.3.4",
     "eslint-config-prettier": "^10.1.5",
+    "jsdom": "^29.0.2",
     "orval": "^8.4.2",
     "postcss": "^8.4.49",
     "prettier": "^3.5.3",
     "tailwindcss": "^3.4.17",
     "typescript": "^5",
-    "babel-plugin-react-compiler": "^1.0.0"
+    "vitest": "^4.1.4"
   }
 }
