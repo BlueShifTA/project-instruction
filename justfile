@@ -74,9 +74,20 @@ run-all:
 # ──────────────────────────────────────────────────────────────
 
 [group('test')]
-[doc("Run backend tests")]
+[doc("Run backend + frontend tests")]
 test:
+  @just test-backend
+  @just test-frontend
+
+[group('test')]
+[doc("Run backend tests")]
+test-backend:
   cd {{ROOT}} && PYTHONPATH={{BACKEND}} uv run pytest {{BACKEND}}/tests -v
+
+[group('test')]
+[doc("Run frontend tests (Vitest)")]
+test-frontend:
+  cd {{FRONTEND}} && pnpm run test
 
 [group('test')]
 [doc("Run tests with coverage report (threshold: 80%)")]
@@ -111,7 +122,7 @@ run-ci:
   cd {{ROOT}} && uv run ruff check {{BACKEND}}
   cd {{ROOT}} && uv run python {{SCRIPTS}}/check_no_sys_path_mutation.py
   @echo "  → Building frontend..."
-  cd {{FRONTEND}} && pnpm install --frozen-lockfile && pnpm run prettier:check && pnpm run lint && pnpm run typecheck && NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000 pnpm run build
+  cd {{FRONTEND}} && pnpm install --frozen-lockfile && pnpm run prettier:check && pnpm run lint && pnpm run typecheck && pnpm run test && NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000 pnpm run build
   @echo "✅ CI checks passed!"
 
 [group('test')]
@@ -128,6 +139,8 @@ run-ci-local:
   cd {{FRONTEND}} && pnpm run lint
   @echo "  → Typecheck..."
   cd {{FRONTEND}} && pnpm run typecheck
+  @echo "  → Tests..."
+  cd {{FRONTEND}} && pnpm run test
   @echo "  → Build..."
   cd {{FRONTEND}} && NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000 pnpm run build
   @echo ""

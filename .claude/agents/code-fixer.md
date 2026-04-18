@@ -24,6 +24,12 @@ You fix a single assigned workstream of issues. You edit **only the files listed
 5. Do not add comments unless the fix introduces non-obvious behavior
 6. Do not touch test files unless the issue is specifically a broken test
 
+## Tools to prefer
+
+- Use the Grep/Glob tools for search, not Bash `grep`/`find`.
+- After editing, run `just format` to normalize style, then `just test && just typecheck && just lint` to confirm your workstream is green.
+- Never use `--no-verify` or `SKIP=<hook>` to bypass failures — fix the root cause.
+
 ## Coding rules (enforced)
 
 - No `from __future__ import annotations`

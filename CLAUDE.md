@@ -435,6 +435,47 @@ codex login
 - `/codex:rescue` — delegate a task to Codex in background
 - `/codex:status` / `/codex:result` / `/codex:cancel` — manage Codex tasks
 
+## Project Skills & Agents
+
+Local skills live in `.claude/skills/<name>/SKILL.md`; local agents in `.claude/agents/<name>.md`. The harness surfaces them at session start — use this table as the routing map when a task matches.
+
+**Always prefer an existing skill or `just` recipe over open-coding the equivalent commands.** If the task has a skill, call it instead of retyping the Bash.
+
+### Skills (invoke with `/<name>`)
+
+| Skill | Use when | Under the hood |
+|-------|----------|----------------|
+| `/install-deps` | Setting up, after pulling, imports fail | `just install` |
+| `/run-dev` | Start backend/frontend servers | `just run-backend` / `run-frontend` |
+| `/generate-types` | After changing backend API shape | `just generate-frontend-types` |
+| `/format-code` | Before commit, after writing code, lint fails | `just format` |
+| `/verify` | Confirm tests + types + lint pass | `just test` + `typecheck` + `lint` |
+| `/ci` | Final check before PR | `just run-ci` |
+| `/karpathy-check` | Catch over-engineering, drive-by edits, untested claims | `git diff` + `rg` (review-only) |
+| `/simplify` | Kill dead code, DRY violations, quality issues | git + Edit, per-file lint, then `just test` + `typecheck` + `lint` |
+| `/brutal-critic` | Adversarial review (`code`, `ux`, `architecture`, `security`) | spawns `read-only` agent; `ux` also calls `/screenshot` |
+| `/dev-cycle` | Full audit → fix → verify → critic pass | chains `code-fixer` agents + Codex |
+| `/research` | Deep source-backed doc on a topic | `WebFetch` (prefer) / `WebSearch` |
+| `/autoresearch` | Bounded goal-directed iteration (≤20 rounds) | git branch + per-iteration verify |
+| `/screenshot` | Visual QA or before UX review | Playwright (desktop + mobile) |
+| `/seed-data` | Populate a fresh DB for testing/demo | OpenAPI + `curl` |
+
+### Agents (spawn via `Agent(subagent_type=…)`)
+
+| Agent | Purpose |
+|-------|---------|
+| `code-fixer` | Fix one disjoint workstream from a dev-cycle audit — edits only its assigned files. |
+| `template-maintainer` | Maintain the template scaffold (bootstrap, cleanup, docs sync). |
+
+### Routing shortcuts
+
+- **Bug fix** → write failing test → fix → `/verify` → `/karpathy-check` (triage drift)
+- **New feature** → TDD → `/verify` → `/format-code` → `/ci`
+- **Cleanup sweep** → `/simplify` (already chains `/format-code` + `/verify`)
+- **Before PR** → `/ci`
+- **After backend API change** → `/generate-types`
+- **Second opinion** → `/brutal-critic` or Codex (`~/node_modules/.bin/codex exec review --uncommitted ...`)
+
 ## Architecture & Scaling Patterns
 
 > **Full reference:** [`instruction/reference/FASTAPI_PATTERNS.md`](instruction/reference/FASTAPI_PATTERNS.md)
@@ -483,24 +524,29 @@ Semantic versioning (`vMAJOR.MINOR.PATCH`). Tag after every commit using `just t
 
 **TDD is mandatory.** Write tests before implementation for every feature, fix, and refactor.
 
+**Functional tests only.** Every test must exercise a real code path through its public interface and assert on observable behavior (return value, HTTP response, rendered DOM text, exit code, side effect). Tests of structure — "component is a function", "class has method X", "the signature accepts parameter Y" — are banned (see "Banned test shapes" below). If a test fails, production code must have broken; if renaming a type can break the test, the test is structural, not functional.
+
+- **Backend** — call the endpoint/function and assert on the response body, status code, or observable side effect (e.g. row in DB, log line, event emitted). Prefer `TestClient` / `CliRunner` / real function invocation over poking internals.
+- **Frontend** — render the component with its real providers (React Query, theme) and assert on the user-facing DOM (text, roles, aria labels). Never assert on state hooks, prop types, or implementation details.
+
 **Test priority order:**
 1. Error paths and edge cases FIRST (these break in production)
 2. Happy path second
-3. Integration tests for established features, unit tests for isolated logic
-4. Regression test required for every bug fix
+3. Regression test required for every bug fix
 
 **Coverage targets:**
 - Core business logic: 95%+ (CRUD, auth, domain models)
 - API routes: 90%+ (all status codes, validation errors, edge cases)
 - Services: 85%+ (including failure modes)
-- Frontend components: test user-facing behavior, not implementation details
+- Frontend components: cover each rendered state (loading, error, success, empty) via DOM assertions
 - **Minimum floor: 80%** — no PR merges below this
 
 **Execution:**
 - Fast tests (no unnecessary sleep)
-- Test markers: `slow`, `integration`, `unit`
-- Run specific tests: `uv run pytest tests -k test_name`
+- Test markers (backend): `slow`, `integration`
+- Run specific tests: `uv run pytest tests -k test_name` (backend), `pnpm run test -- <pattern>` (frontend)
 - Always run full suite before commit: `just test && just lint && just typecheck`
+- `just test` runs both backend (`pytest`) and frontend (`vitest`) — neither is optional
 
 ### Test design rules — what a test must prove
 
