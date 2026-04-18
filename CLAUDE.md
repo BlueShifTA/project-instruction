@@ -435,6 +435,47 @@ codex login
 - `/codex:rescue` — delegate a task to Codex in background
 - `/codex:status` / `/codex:result` / `/codex:cancel` — manage Codex tasks
 
+## Project Skills & Agents
+
+Local skills live in `.claude/skills/<name>/SKILL.md`; local agents in `.claude/agents/<name>.md`. The harness surfaces them at session start — use this table as the routing map when a task matches.
+
+**Always prefer an existing skill or `just` recipe over open-coding the equivalent commands.** If the task has a skill, call it instead of retyping the Bash.
+
+### Skills (invoke with `/<name>`)
+
+| Skill | Use when | Under the hood |
+|-------|----------|----------------|
+| `/install-deps` | Setting up, after pulling, imports fail | `just install` |
+| `/run-dev` | Start backend/frontend servers | `just run-backend` / `run-frontend` |
+| `/generate-types` | After changing backend API shape | `just generate-frontend-types` |
+| `/format-code` | Before commit, after writing code, lint fails | `just format` |
+| `/verify` | Confirm tests + types + lint pass | `just test` + `typecheck` + `lint` |
+| `/ci` | Final check before PR | `just run-ci` |
+| `/karpathy-check` | Catch over-engineering, drive-by edits, untested claims | `git diff` + `rg` (review-only) |
+| `/simplify` | Kill dead code, DRY violations, quality issues | git + Edit, per-file lint, then `just test` + `typecheck` + `lint` |
+| `/brutal-critic` | Adversarial review (`code`, `ux`, `architecture`, `security`) | spawns `read-only` agent; `ux` also calls `/screenshot` |
+| `/dev-cycle` | Full audit → fix → verify → critic pass | chains `code-fixer` agents + Codex |
+| `/research` | Deep source-backed doc on a topic | `WebFetch` (prefer) / `WebSearch` |
+| `/autoresearch` | Bounded goal-directed iteration (≤20 rounds) | git branch + per-iteration verify |
+| `/screenshot` | Visual QA or before UX review | Playwright (desktop + mobile) |
+| `/seed-data` | Populate a fresh DB for testing/demo | OpenAPI + `curl` |
+
+### Agents (spawn via `Agent(subagent_type=…)`)
+
+| Agent | Purpose |
+|-------|---------|
+| `code-fixer` | Fix one disjoint workstream from a dev-cycle audit — edits only its assigned files. |
+| `template-maintainer` | Maintain the template scaffold (bootstrap, cleanup, docs sync). |
+
+### Routing shortcuts
+
+- **Bug fix** → write failing test → fix → `/verify` → `/karpathy-check` (triage drift)
+- **New feature** → TDD → `/verify` → `/format-code` → `/ci`
+- **Cleanup sweep** → `/simplify` (already chains `/format-code` + `/verify`)
+- **Before PR** → `/ci`
+- **After backend API change** → `/generate-types`
+- **Second opinion** → `/brutal-critic` or Codex (`~/node_modules/.bin/codex exec review --uncommitted ...`)
+
 ## Architecture & Scaling Patterns
 
 > **Full reference:** [`instruction/reference/FASTAPI_PATTERNS.md`](instruction/reference/FASTAPI_PATTERNS.md)

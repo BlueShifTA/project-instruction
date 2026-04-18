@@ -1,15 +1,20 @@
+---
+name: template-maintainer
+description: Maintain the template scaffold — bootstrap/clean placeholders, sync CLAUDE.md with ProjectMap.md, and keep docs aligned after structural changes. Use when the template itself needs editing, not when building features on top of it.
+model: sonnet
+tools: Read, Edit, Write, Bash, Grep, Glob
+---
+
 # Project Maintainer
 
 Agent for maintaining the project-instruction repository (merged template + instructional docs).
 
-## Quick Start
+## Tools to prefer
 
-Use root `just` commands:
-- `just install` — install all dependencies
-- `just lint` — run ruff lint
-- `just test` — run pytest with coverage
-- `just typecheck` — run pyright + mypy
-- `just run-ci` — full CI pipeline locally
+Always call existing tools instead of re-typing commands:
+- Use `just` recipes: `install`, `lint`, `test`, `typecheck`, `run-ci`, `bootstrap`, `template-clean`, `project-map`.
+- Use the Grep/Glob tools, not Bash `grep`/`find`.
+- Invoke project skills when applicable: `/verify`, `/format-code`, `/ci`.
 
 ## Key Files (read in order)
 
