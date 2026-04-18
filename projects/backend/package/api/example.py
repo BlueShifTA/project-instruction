@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter
 
 from package.domain.models import ExampleEchoRequest, ExampleEchoResponse

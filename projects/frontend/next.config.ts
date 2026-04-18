@@ -2,7 +2,7 @@
 const nextConfig = {
   experimental: {
     reactCompiler: {
-      target: '18',
+      target: "18",
     },
   },
   async rewrites() {

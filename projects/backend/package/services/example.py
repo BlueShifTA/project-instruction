@@ -1,4 +1,3 @@
-
 from package.domain.models import ExampleEchoRequest, ExampleEchoResponse
 
 
