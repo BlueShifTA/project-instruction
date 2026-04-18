@@ -26,6 +26,7 @@ Spawn a **critic agent** (`subagent_type: read-only`, `model: sonnet`) — claud
 
 - Read every file in the target path; do not skip or summarise — full coverage required
 - Scan for bugs, code smells, type errors, security issues, dead code, SOLID violations, TypedDict misuse, banned import patterns
+- Also flag **Karpathy-principle violations** (see `instruction/reference/CODING_PRINCIPLES.md`): speculative features / over-engineering (Simplicity First), drive-by edits unrelated to the stated goal (Surgical Changes), untested claims of behavior (Goal-Driven Execution), silent assumptions or hidden tradeoffs (Think Before Coding)
 - Classify each issue: **P0** (breaks functionality), **P1** (significant bug/smell), **P2** (minor improvement), **P3** (nit/style)
 - Output a structured issues list with file paths, line numbers, and descriptions
 - Save the audit report to a temporary file for Phase 2
@@ -70,7 +71,7 @@ If any check fails:
 Run **Codex** as adversarial reviewer via Bash:
 
 ```bash
-~/node_modules/.bin/codex exec "Adversarial code review. Review the git diff below and classify every issue P0–P3 (P0=breaks functionality, P1=significant bug/smell, P2=minor, P3=nit). Be hostile — assume the author missed things. Focus on: logic errors, type safety, SOLID violations, security, banned patterns (from __future__ import annotations, if TYPE_CHECKING, print(), module-level mutable instances). Output file:line for every finding.\n\n$(git diff HEAD~1)" --dangerously-bypass-approvals-and-sandbox --ephemeral 2>&1
+~/node_modules/.bin/codex exec "Adversarial code review. Review the git diff below and classify every issue P0–P3 (P0=breaks functionality, P1=significant bug/smell, P2=minor, P3=nit). Be hostile — assume the author missed things. Focus on: logic errors, type safety, SOLID violations, security, banned patterns (from __future__ import annotations, if TYPE_CHECKING, print(), module-level mutable instances), and Karpathy-principle violations (speculative features / over-engineering, drive-by edits unrelated to the stated goal, untested behavior claims, silent assumptions). Output file:line for every finding.\n\n$(git diff HEAD~1)" --dangerously-bypass-approvals-and-sandbox --ephemeral 2>&1
 ```
 
 - If **any P0 issues** are found, loop back to Phase 3 with a new workstream for those issues
