@@ -7,6 +7,14 @@ argument-hint: "[target-path|--changed]"
 
 Code simplification and quality review. Scans for reuse opportunities, quality issues, and efficiency problems, then fixes them.
 
+## Non-Negotiables (override everything else on conflict; canonical: `CLAUDE.md`)
+
+- **No flattery, no filler.** Start with the finding or the diff.
+- **Disagree when you disagree.** If a "simplification" would harm clarity or behavior, refuse it and say why.
+- **Never fabricate.** No invented callers, dead-code claims, or duplication counts. Grep first.
+- **Stop when confused.** If a fix has two defensible shapes, report both — do not pick silently.
+- **Touch only what you must.** Every changed line must trace to a reported issue. No drive-by reformatting.
+
 **Target:** `$ARGUMENTS`
 
 ## Step 1: Identify Scope

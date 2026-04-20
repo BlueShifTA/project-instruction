@@ -7,6 +7,14 @@ argument-hint: [target-path]
 
 Run a complete development cycle: audit the codebase, plan fixes, execute in parallel, verify, and re-review.
 
+## Non-Negotiables (override everything else on conflict; canonical: `CLAUDE.md`)
+
+- **No flattery, no filler.** Start each phase with its output, not preamble.
+- **Disagree when you disagree.** If the audit or critic is wrong about an issue, say so before dispatching a fix.
+- **Never fabricate.** No invented findings, priority levels, or verification results. Every issue cites `file:line`.
+- **Stop when confused.** If workstream grouping is ambiguous (e.g. files overlap), ask — do not silently merge or split.
+- **Touch only what you must.** Each workstream edits only its assigned files. Zero overlap is mandatory.
+
 Target path: `$ARGUMENTS` (defaults to project root)
 
 ## Agent Roster

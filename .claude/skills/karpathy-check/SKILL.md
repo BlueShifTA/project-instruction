@@ -7,6 +7,14 @@ argument-hint: "[target-path|--changed]"
 
 Scan the target for violations of the 4 coding principles in `instruction/reference/CODING_PRINCIPLES.md`. Report findings grouped by principle — do **not** fix anything (review-only). Fixing is the user's call after seeing the report.
 
+## Non-Negotiables (override everything else on conflict; canonical: `CLAUDE.md`)
+
+- **No flattery, no filler.** Start with the findings table.
+- **Disagree when you disagree.** If the diff is clean, say so — do not manufacture findings.
+- **Never fabricate.** Every finding cites `file:line` and quotes evidence. No invented violations.
+- **Stop when confused.** If intent behind a change is unclear, flag it — do not guess.
+- **Touch only what you must.** Review-only: never edit files, never run verification. That's other skills' jobs.
+
 **Target:** `$ARGUMENTS`
 
 ## Step 1: Identify Scope
