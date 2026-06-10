@@ -67,7 +67,7 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 
 - **Architecture & Design:** `templates/1-systems-architect.md`, `profiles/[your-name]/DECISIONS.md`, `reference/AGENTIC_AI_ARCHITECTURES.md`
 - **Security:** `reference/SECURITY_PATTERNS.md`, `profiles/coding-profiles/systems-engineer.md`, `profiles/coding-profiles/reliability-engineer.md`
-- **Code Quality:** `templates/5-code-review-standards.md`, `guides/PHASE_5_AUTO_QUALITY.md`, `reference/CODE_STYLE_ANALYSIS.md`
+- **Code Quality:** `templates/5-code-review-standards.md`, `guides/PHASE_5_AUTO_QUALITY.md`, `reference/PYTHON_STYLE.md`
 - **Team Management:** `templates/8-communication-decision-making.md`, `guides/WORK_CYCLE.md`, `reference/CHECKLIST.md`
 - **Deployment & Operations:** `templates/6-devops-deployment.md`, `profiles/coding-profiles/reliability-engineer.md`
 - **AI Agent Operations:** `reference/AGENT_OPERATING_RULES.md`, `reference/AGENTIC_AI_ARCHITECTURES.md`
@@ -81,7 +81,7 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 - **Engineering managers (4 hours):** `guides/0-getting-started.md` (Scenario 3) -> all `templates/` -> `reference/CHECKLIST.md` monthly
 - **New team members (1 week):** `guides/0-getting-started.md` (Scenario 2) -> your role template -> your coding profile
 - **Architects (8 hours):** `templates/1-systems-architect.md` -> `profiles/[your-name]/DECISIONS.md` -> `reference/AGENTIC_AI_ARCHITECTURES.md`
-- **Code reviewers (3 hours):** `templates/5-code-review-standards.md` -> all `profiles/coding-profiles/` -> `reference/CODE_STYLE_ANALYSIS.md`
+- **Code reviewers (3 hours):** `templates/5-code-review-standards.md` -> all `profiles/coding-profiles/` -> `reference/PYTHON_STYLE.md`
 
 ---
 
@@ -91,7 +91,7 @@ For coding rules enforced in this repo, see the root [CLAUDE.md](../CLAUDE.md).
 |---------|-------|
 | Agentic AI / Frameworks | `reference/AGENTIC_AI_ARCHITECTURES.md` |
 | API design | `templates/3-backend-engineer.md`, `profiles/coding-profiles/data-engineer.md` |
-| Code review | `templates/5-code-review-standards.md`, `reference/CODE_STYLE_ANALYSIS.md` |
+| Code review | `templates/5-code-review-standards.md`, `reference/PYTHON_STYLE.md` |
 | Security | `reference/SECURITY_PATTERNS.md`, `profiles/coding-profiles/systems-engineer.md` |
 | CI/CD | `templates/6-devops-deployment.md`, `guides/PHASE_5_AUTO_QUALITY.md` |
 | Database | `profiles/coding-profiles/data-engineer.md`, `profiles/[your-name]/DECISIONS.md` |
@@ -163,16 +163,19 @@ instruction/
 │   ├── PHASE_5_AUTO_QUALITY.md
 │   └── PROJECT_QUICKSTART.md
 └── reference/                     # Checklists & standards
-    ├── CHECKLIST.md
+    ├── CODING_PRINCIPLES.md
+    ├── PYTHON_STYLE.md
+    ├── SOLID_PRINCIPLES.md
+    ├── FASTAPI_PATTERNS.md
+    ├── REFACTOR_AND_TESTING.md
     ├── SECURITY_PATTERNS.md
-    ├── AGENTIC_AI_ARCHITECTURES.md
-    ├── AUDIT_TEMPLATE.md
-    ├── CODE_STYLE_ANALYSIS.md
+    ├── AGENT_ROUTING.md
     ├── AGENT_OPERATING_RULES.md
-    ├── LESSONS_LEARNED_TEMPLATE.md
+    ├── AGENTIC_AI_ARCHITECTURES.md
     ├── PATTERNS.md
-    ├── STRUCTURE.md
-    └── TEMPLATE_REGISTRY.md
+    ├── CHECKLIST.md
+    ├── AUDIT_TEMPLATE.md
+    └── LESSONS_LEARNED_TEMPLATE.md
 ```
 
 ---

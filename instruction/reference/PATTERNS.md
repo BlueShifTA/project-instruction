@@ -20,7 +20,7 @@ Each new capability layer (move → stream → control → record → infer) int
 When costs become visible, they change priorities. Context-loading costs can dominate total spend (e.g., 98%+ of token cost). Make costs visible early — they shift architectural decisions.
 
 ### 6. Template-Driven Development Compresses MVP Time
-Reusable templates skip scaffolding overhead and deliver working software in hours, not days. Template ROI is confirmed — TEMPLATE_REGISTRY.md is strategic.
+Reusable templates skip scaffolding overhead and deliver working software in hours, not days. Template ROI is confirmed — this repo is the template.
 
 ### 7. Safety-First Testing is Non-Negotiable for Physical Systems
 When controlling physical hardware via UI, write safety tests FIRST, ship AFTER all pass. The test-coverage threshold doubles when hardware actuation is involved. A UI bug that sends wrong values isn't a crash — it's broken hardware.
