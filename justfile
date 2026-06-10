@@ -86,6 +86,31 @@ bootstrap *args:
 template-check:
   uv run python devops/template_check.py
 
+[doc("FINAL de-templating step: wipe template git history into one clean initial commit. DESTRUCTIVE")]
+[group('template')]
+template-reset-history:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  BRANCH=$(git branch --show-current)
+  echo "This permanently deletes ALL git history and tags on this clone."
+  echo "The current working tree becomes a single 'Initial commit' on '$BRANCH'."
+  read -p "Type 'reset' to continue: " CONFIRM
+  if [ "$CONFIRM" != "reset" ]; then
+    echo "Aborted."
+    exit 1
+  fi
+  git checkout --orphan template-reset-tmp
+  git add -A
+  git commit -m "Initial commit"
+  git branch -D "$BRANCH"
+  git branch -m "$BRANCH"
+  for t in $(git tag); do git tag -d "$t"; done
+  echo
+  echo "History reset: single initial commit on '$BRANCH'."
+  echo "Point origin at the new project repo before pushing:"
+  echo "  git remote set-url origin <new-repo-url>"
+  echo "  git push --force --set-upstream origin $BRANCH"
+
 [doc("Create and push a release tag. Leave version empty to auto-increment patch")]
 [group('release')]
 create-version $VERSION="":

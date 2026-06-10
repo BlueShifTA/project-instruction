@@ -138,6 +138,8 @@ def main() -> int:
     print("3. just run-frontend")
     print("4. just test && just lint")
     print("5. replace the demo surface, then run `just template-check` until clean")
+    print("6. just template-reset-history  (wipe template git history,")
+    print("   then point origin at the new repo and force-push)")
     return 0
 
 

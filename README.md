@@ -59,6 +59,7 @@ All automation via `just` — run `just --list` for the full set.
 | `just setup` | One-shot scaffold: bootstrap + install + checklist |
 | `just bootstrap` | Rename template placeholders only |
 | `just template-check` | List remaining template remnants (exit 0 = clean) |
+| `just template-reset-history` | Final de-templating step: wipe template git history into one initial commit |
 | `just create-version [X.Y.Z]` | Tag + push a release (empty = auto patch bump) |
 | `just clean` | Delete deps, build outputs, tool caches (restore: `just install`) |
 
