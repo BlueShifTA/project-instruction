@@ -32,20 +32,6 @@ async def client_with_auth(client: AsyncClient) -> AsyncClient:
 
 
 # ──────────────────────────────────────────────────────────────
-# Settings & Config Fixtures
-# ──────────────────────────────────────────────────────────────
-
-
-@pytest.fixture
-def test_settings() -> dict[str, object]:
-    """Provide test configuration."""
-    return {
-        "debug": True,
-        "testing": True,
-    }
-
-
-# ──────────────────────────────────────────────────────────────
 # Markers for Test Organization
 # ──────────────────────────────────────────────────────────────
 

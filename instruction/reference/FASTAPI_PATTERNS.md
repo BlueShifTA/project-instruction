@@ -6,12 +6,13 @@
 
 ## Middleware ordering
 
-Middleware runs in reverse registration order. Register outermost (first-to-run) middleware first:
-1. `RequestIDMiddleware` — attach request ID for log tracing
-2. `RequestSizeLimitMiddleware` — reject oversized payloads before parsing
-3. `CORSMiddleware` — handle cross-origin requests
+`app.add_middleware()` **prepends** — the middleware registered LAST is the OUTERMOST at request time. To get the request flow `RequestIDMiddleware → RequestSizeLimitMiddleware → CORSMiddleware → routes`, register in this order:
 
-See `projects/backend/package/main.py` for the reference implementation.
+1. `CORSMiddleware` — handle cross-origin requests
+2. `RequestSizeLimitMiddleware` — reject oversized payloads before parsing
+3. `RequestIDMiddleware` — registered last = outermost, so every response (including 413s short-circuited by the size limiter) carries `X-Request-ID`
+
+Regression test: `test_oversized_request_response_carries_request_id` in `projects/backend/tests/test_security.py`. See `projects/backend/package/main.py` for the reference implementation.
 
 ## Lifespan resource management
 

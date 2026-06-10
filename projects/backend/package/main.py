@@ -112,11 +112,10 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    # Attach a unique request ID for log tracing (outermost middleware, runs first).
-    app.add_middleware(RequestIDMiddleware)
-    # Enforce request body size limit before any route handler runs.
-    app.add_middleware(RequestSizeLimitMiddleware)
-
+    # add_middleware() PREPENDS: the last one added is the outermost at request
+    # time.  Desired request flow: RequestID → SizeLimit → CORS → routes, so
+    # every response — including 413s short-circuited by the size limiter —
+    # carries an X-Request-ID.
     app.add_middleware(
         CORSMiddleware,
         allow_origins=cors_origins,
@@ -124,6 +123,10 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    # Enforce request body size limit before any route handler runs.
+    app.add_middleware(RequestSizeLimitMiddleware)
+    # Attach a unique request ID for log tracing — registered last = outermost.
+    app.add_middleware(RequestIDMiddleware)
     app.include_router(health_router)
     app.include_router(example_router, prefix=settings.api_prefix)
     return app

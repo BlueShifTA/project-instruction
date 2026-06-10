@@ -1,6 +1,9 @@
+import json
 from functools import lru_cache
+from typing import Annotated
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import field_validator
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -19,10 +22,21 @@ class Settings(BaseSettings):
     # Security: explicit CORS origins only — no wildcards.  Wildcards are
     # rejected at startup by create_app().  Add your frontend origin here or
     # override via CORS_ORIGINS env var (comma-separated or JSON list).
-    cors_origins: list[str] = [
+    cors_origins: Annotated[list[str], NoDecode] = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
     ]
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def _parse_cors_origins(cls, value: str | list[str]) -> list[str]:
+        if isinstance(value, list):
+            return value
+        text = value.strip()
+        if text.startswith("["):
+            parsed: list[str] = json.loads(text)
+            return parsed
+        return [origin.strip() for origin in text.split(",") if origin.strip()]
 
     # Scaling: cap the default thread pool used by run_in_executor.
     # None means Python's default (min(32, cpu_count+4)).  Set a positive int

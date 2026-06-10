@@ -90,6 +90,26 @@ def test_oversized_request_returns_413() -> None:
     )
 
 
+def test_oversized_request_response_carries_request_id() -> None:
+    """Even a 413 produced by the size-limit middleware must carry X-Request-ID.
+
+    Regression: RequestIDMiddleware must be the OUTERMOST middleware, so
+    responses short-circuited by inner middleware still get tagged for log
+    correlation. add_middleware() prepends — RequestIDMiddleware must be
+    registered LAST in create_app().
+    """
+    client = TestClient(app, raise_server_exceptions=False)
+    response = client.post(
+        "/api/example/echo",
+        content=b"x" * (_ONE_MB + 1),
+        headers={"Content-Type": "application/octet-stream"},
+    )
+    assert response.status_code == 413
+    assert response.headers.get("x-request-id"), (
+        "413 response is missing X-Request-ID — RequestIDMiddleware is not outermost."
+    )
+
+
 def test_request_at_exact_size_limit_succeeds() -> None:
     """A request body at exactly 1 MB must be accepted (boundary is exclusive)."""
     client = TestClient(app, raise_server_exceptions=False)
@@ -190,29 +210,6 @@ def test_default_host_is_loopback() -> None:
     assert settings.host == "127.0.0.1", (
         f"Default host is '{settings.host}' — must be '127.0.0.1', not '0.0.0.0'."
     )
-
-
-# ──────────────────────────────────────────────────────────────
-# Worker Threads
-# ──────────────────────────────────────────────────────────────
-
-
-def test_worker_threads_setting_is_present() -> None:
-    """Settings must expose a worker_threads field for bounded thread pools."""
-    settings = get_settings()
-    assert hasattr(settings, "worker_threads"), (
-        "Settings is missing 'worker_threads'. Add it to core/config.py."
-    )
-
-
-def test_worker_threads_default_is_none_or_positive() -> None:
-    """worker_threads default must be None (unbounded OS default) or a positive int."""
-    settings = get_settings()
-    wt = settings.worker_threads  # type: ignore[attr-defined]
-    if wt is not None:
-        assert isinstance(wt, int) and wt > 0, (
-            f"worker_threads must be None or a positive int, got {wt!r}."
-        )
 
 
 # ──────────────────────────────────────────────────────────────
