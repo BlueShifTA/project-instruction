@@ -52,29 +52,33 @@ typecheck:
   uv run pyright projects/backend/package
   cd projects/frontend && pnpm run typecheck
 
-[doc("Mirror GitHub Actions CI: lint, typecheck, tests with coverage, frontend build")]
+[doc("The CI pipeline (GitHub Actions runs exactly this): pre-commit gate + tests + frontend build")]
 [group('test')]
 run-ci:
-  uv sync --all-packages --all-groups
-  uv run ruff check projects/backend
-  uv run ruff format --check projects/backend
-  uv run python devops/check_no_sys_path_mutation.py
-  uv run python devops/check_no_future_annotations.py
-  uv run python devops/check_no_type_checking.py
-  PYTHONPATH=projects/backend uv run mypy projects/backend/package
-  uv run pyright projects/backend/package
-  PYTHONPATH=projects/backend uv run pytest projects/backend/tests --cov=projects/backend/package --cov-report=term-missing --cov-fail-under=80
-  cd projects/frontend && pnpm install --frozen-lockfile && pnpm run prettier:check && pnpm run lint && pnpm run typecheck && pnpm run test && NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000 pnpm run build
+  uv sync --locked --all-packages --all-groups
+  cd projects/frontend && pnpm install --frozen-lockfile
+  just lint
+  just test
+  cd projects/frontend && NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000 pnpm run build
+
+[doc("One-shot project scaffold: bootstrap rename + install + de-templating checklist")]
+[group('template')]
+setup *args:
+  uv run python devops/bootstrap.py {{args}}
+  just install
+  @uv run python devops/template_check.py || true
+  @echo ""
+  @echo "Scaffold ready. Next: just run-backend + just run-frontend, then work through the checklist above."
 
 [doc("Rename template placeholders. Explicit args: --project-name ... --project-slug ... --python-package ... --non-interactive")]
 [group('template')]
 bootstrap *args:
   uv run python devops/bootstrap.py {{args}}
 
-[doc("Mark template cleanup done after first build; prints manual follow-ups")]
+[doc("List remaining template remnants (brand strings + demo surface). Exit 0 when fully de-templated")]
 [group('template')]
-template-clean:
-  uv run python devops/template_clean.py
+template-check:
+  uv run python devops/template_check.py
 
 [doc("Tag a new version: just tag [patch|minor|major]")]
 [group('release')]
