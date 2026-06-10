@@ -14,7 +14,7 @@ install:
 [doc("Delete local dev artifacts (deps, build outputs, tool caches). Restore with just install")]
 [group('install')]
 clean:
-  rm -rf .venv .mypy_cache .ruff_cache .pytest_cache .coverage
+  rm -rf .venv .mypy_cache .ruff_cache .pytest_cache .coverage htmlcov .pnpm-store
   rm -rf projects/frontend/node_modules projects/frontend/.next projects/frontend/coverage projects/frontend/tsconfig.tsbuildinfo
 
 [group('run')]
