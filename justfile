@@ -80,21 +80,33 @@ bootstrap *args:
 template-check:
   uv run python devops/template_check.py
 
-[doc("Tag a new version: just tag [patch|minor|major]")]
+[doc("Create and push a release tag. Leave version empty to auto-increment patch")]
 [group('release')]
-tag bump="patch":
+create-version $VERSION="":
   #!/usr/bin/env bash
   set -euo pipefail
-  CURRENT=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
-  VERSION="${CURRENT#v}"
-  IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
-  case "{{bump}}" in
-    major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
-    minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
-    patch) PATCH=$((PATCH + 1)) ;;
-    *) echo "Invalid bump type: {{bump}} (use patch, minor, or major)"; exit 1 ;;
-  esac
-  NEW="v${MAJOR}.${MINOR}.${PATCH}"
-  echo "${CURRENT} -> ${NEW}"
-  git tag -a "$NEW" -m "Release $NEW"
-  echo "Tagged $NEW (run 'git push --tags' to publish)"
+  TAG_REGEX='^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+)?$'
+  if [ -z "$VERSION" ]; then
+    LAST_TAG=$(git tag --sort=-version:refname | grep -E -m1 '^v[0-9]+\.[0-9]+\.[0-9]+$' || echo "v0.0.0")
+    IFS='.' read -r MAJOR MINOR PATCH <<< "${LAST_TAG#v}"
+    PATCH=$((PATCH + 1))
+    VERSION="$MAJOR.$MINOR.$PATCH"
+  fi
+
+  if [[ ! "$VERSION" =~ $TAG_REGEX ]]; then
+    echo "Invalid release version: '$VERSION'"
+    echo "Expected format: X.Y.Z or X.Y.Z-SUFFIX"
+    exit 1
+  fi
+
+  TAG="v$VERSION"
+  echo
+  git --no-pager log -1
+  echo
+  read -p "Do you want to create and push release '$TAG' for the commit above? (y/n): " CONFIRM
+
+  if [ "$CONFIRM" = "y" ] || [ "$CONFIRM" = "Y" ]; then
+    git tag -a "$TAG" -m "Release $TAG"
+    git push origin "$TAG"
+    echo "Tag '$TAG' pushed to origin."
+  fi

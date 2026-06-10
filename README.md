@@ -59,7 +59,7 @@ All automation via `just` — run `just --list` for the full set.
 | `just setup` | One-shot scaffold: bootstrap + install + checklist |
 | `just bootstrap` | Rename template placeholders only |
 | `just template-check` | List remaining template remnants (exit 0 = clean) |
-| `just tag patch\|minor\|major` | Tag a release |
+| `just create-version [X.Y.Z]` | Tag + push a release (empty = auto patch bump) |
 
 Before every commit: `just lint && just typecheck && just test` — never `--no-verify`.
 

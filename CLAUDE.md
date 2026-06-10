@@ -27,7 +27,7 @@ All commands via `just` — `just --list`. Install: `just install`.
 | Typecheck (mypy + pyright + tsc) | `just typecheck` |
 | Mirror GitHub CI locally | `just run-ci` |
 | Regenerate frontend API client (backend must run) | `just generate-frontend-types` |
-| Tag release | `just tag patch\|minor\|major` |
+| Tag + push release (empty = auto patch bump) | `just create-version [X.Y.Z]` |
 
 ### Generated API client
 
@@ -166,7 +166,7 @@ Commit messages: imperative mood, lead with root cause, one concern per commit. 
 - <impact/testing notes>
 ```
 
-Semantic versioning; tag releases with `just tag patch|minor|major` (PATCH fixes/small features, MINOR new modules/API additions, MAJOR breaking changes). Tag when shipping, not per commit.
+Semantic versioning; tag releases with `just create-version` — empty arg auto-increments PATCH (fixes/small features); pass `X.Y.Z` explicitly for MINOR (new modules/API additions) or MAJOR (breaking changes) bumps. Confirms interactively, then creates the annotated tag `vX.Y.Z` and pushes it. Tag when shipping, not per commit.
 
 ## Agents & Skills
 
