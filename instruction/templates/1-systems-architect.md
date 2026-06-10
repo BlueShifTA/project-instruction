@@ -1,6 +1,6 @@
 # 1. The Systems Architect
 
-**Role:** Senior Platform Architect  
+**Role:** Senior Platform Architect
 **Context:** World-class infrastructure company needing high-performance [WEB-SITE TYPE: portfolio / SaaS / e-commerce / embedded system]
 
 **📍 Navigation:**
@@ -67,7 +67,7 @@ architecture/
 
 ## Success Criteria
 
-✅ Specification is so clear that a junior engineer can implement it without questions  
-✅ All 9 deliverables are complete and linked  
-✅ Performance targets are measurable (e.g., "LCP < 2.5s")  
-✅ Every component has a clear purpose and constraints  
+✅ Specification is so clear that a junior engineer can implement it without questions
+✅ All 9 deliverables are complete and linked
+✅ Performance targets are measurable (e.g., "LCP < 2.5s")
+✅ Every component has a clear purpose and constraints

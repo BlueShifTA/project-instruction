@@ -18,7 +18,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SCAN_ROOTS = ("projects", "scripts", "docs")
+SCAN_ROOTS = ("projects", "devops", "docs")
 ALLOWLIST = {Path("docs/conf.py")}
 DISALLOWED_METHODS = {"insert", "append", "extend"}
 SKIP_DIRS = {

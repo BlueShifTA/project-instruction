@@ -4,8 +4,8 @@
 
 **Technical deep-dive into coding patterns from <REPO> repository**
 
-**Analysis Date:** 2026-02-20 12:27 CET  
-**Source Repository:** <ORG>/<REPO>  
+**Analysis Date:** 2026-02-20 12:27 CET
+**Source Repository:** <ORG>/<REPO>
 **Commits Analyzed:** 100+
 **Files Sampled:** 50+ Python files across projects/<CORE_PACKAGE>, projects/devices, projects/api
 
@@ -19,8 +19,8 @@ Our code demonstrates **production-grade scientific software engineering** with 
 - **Async concurrency:** Non-blocking I/O for real-time constraints
 - **Maintainability:** Clear naming, modular structure, comprehensive logging
 
-**Maturity Level:** Senior+ (5-10 years experience equivalent)  
-**Domain Expertise:** Scientific instrumentation, embedded systems, optical physics  
+**Maturity Level:** Senior+ (5-10 years experience equivalent)
+**Domain Expertise:** Scientific instrumentation, embedded systems, optical physics
 **Code Quality Score:** 8.5/10 (based on conventions, testing, documentation)
 
 ---
@@ -39,19 +39,19 @@ from typing import Any
 @dc.dataclass
 class ComponentBase(LoggingHelper):
     """Base configuration for component."""
-    
+
     # Public configuration (immutable after init)
     setting_a: float
     setting_b: int
-    
+
     # Private state (mutable)
     _state: Any = dc.field(default=None, init=False)
-    
+
     def __post_init__(self) -> None:
         """Validate configuration, initialize derived state."""
         assert self.setting_a > 0, "setting_a must be positive"
         self._state = self._initialize_state()
-    
+
     @dc.dataclass
     class Scratch:
         """Nested dataclass for runtime state."""
@@ -83,7 +83,7 @@ from typing import Protocol, Any, AsyncIterator
 # Define protocol (structural subtyping)
 class ProcessProtocol(Protocol):
     """Any object implementing this method satisfies ProcessProtocol."""
-    
+
     async def run_iter(self, scratch: Any) -> AsyncIterator[list[Any]]:
         """Yield messages from async iteration."""
         ...
@@ -92,7 +92,7 @@ class ProcessProtocol(Protocol):
 @dc.dataclass
 class ProcessBase(LoggingHelper):
     """Optional base class providing default implementation."""
-    
+
     async def run_iter(self, scratch: Any) -> AsyncIterator[list[Any]]:
         try:
             msgs = await self.setup_iter(scratch) or []
@@ -147,7 +147,7 @@ async def main():
         sensor.monitor_temperature(),
         controller.update_pid_loop(),
     ]
-    
+
     # Gather results or run until first complete
     await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -298,45 +298,45 @@ def with_camera_retry[T](
     func: Callable[[Any], Awaitable[T]],
 ) -> Callable[[Any], Awaitable[T]]:
     """Decorator adding retry logic with camera reset."""
-    
+
     @functools.wraps(func)
     async def wrapper(self: Any, *args: Any, **kwargs: Any) -> T:
         retries = CameraConstants.MAX_ATTEMPTS
-        
+
         for attempt in range(retries):
             try:
                 result = await func(self, *args, **kwargs)
                 return result
-            
+
             except Exception as exc:
                 is_last_attempt = (attempt == retries - 1)
-                
+
                 if is_last_attempt:
                     break
-                
+
                 # Log retry
                 self.logger.warning(
                     "Attempt %d/%d failed: %s",
                     attempt + 1, retries, exc,
                     exc_info=True
                 )
-                
+
                 # Device-specific error code handling
                 do_factory_reset = "[-1008]" in str(exc)
                 cam_config = self.get_current_configuration() if attempt == 0 else None
-                
+
                 # Reset device
                 async with manage_streaming_state(self):
                     await self.reset(
                         execute_factory_reset=do_factory_reset,
                         target_config=cam_config,
                     )
-                
+
                 # Exponential backoff
                 await asyncio.sleep(CameraConstants.ATTEMPT_RETRY_DELAY)
-        
+
         raise RuntimeError(f"Operation failed after {retries} attempts")
-    
+
     return wrapper
 
 # Usage:
@@ -371,7 +371,7 @@ import logging
 
 class LoggingHelper:
     """Provides self.logger to any subclass."""
-    
+
     @property
     def logger(self) -> logging.Logger:
         """Lazy logger creation using class name."""
@@ -517,20 +517,20 @@ tests/
 def test_incoupling_boundary_propagation():
     """
     Regression test for MR !1768.
-    
+
     Ensures that when ROI boundaries + active rows are available,
     aperture-based coupling checks are used instead of skewness fallback.
     """
     # Arrange: Setup with known good aperture data
     reader = create_test_reader()
     boundaries = compute_roi_boundaries(reader.config)
-    
+
     # Act: Update coupling status with boundaries
     status = reader.update_coupling_status_with_light_source(
         boundaries=boundaries,
         active_rows=[0, 1, 2]
     )
-    
+
     # Assert: Should use aperture check, not skewness
     assert status.used_aperture_check is True
     assert status.skewness_gating is False
@@ -626,10 +626,10 @@ see merge request <ORG>/<REPO>!1824
 
 ### Anti-Patterns (Absent from Our commits)
 
-❌ **Vague messages:** "Fix bug", "Update code"  
-❌ **Past tense:** "Fixed camera", "Updated config"  
-❌ **Multiple unrelated changes:** Mixing features + refactors  
-❌ **Missing context:** No explanation for *why* change was made  
+❌ **Vague messages:** "Fix bug", "Update code"
+❌ **Past tense:** "Fixed camera", "Updated config"
+❌ **Multiple unrelated changes:** Mixing features + refactors
+❌ **Missing context:** No explanation for *why* change was made
 ❌ **WIP commits:** "WIP", "temp", "test" (enforced by pre-commit)
 
 ---
@@ -951,17 +951,17 @@ def validate_beam_aperture(
 ) -> bool:
     """
     Check if laser beam aperture meets quality thresholds.
-    
+
     Validates beam profile against configured boundaries and
     raises UnbalancedOuterAperturesException if outer chromium
     apertures show >20% power imbalance.
-    
+
     Args:
         image: Raw camera image (2D numpy array)
-    
+
     Returns:
         True if aperture passes all checks
-    
+
     Raises:
         UnbalancedOuterAperturesException: Outer apertures unbalanced
         LaserBeamIncompleteException: Beam profile incomplete
@@ -1000,7 +1000,7 @@ from functools import cached_property
 class SpectralResponse:
     wavelengths: tuple[float, ...]
     values: tuple[float, ...]
-    
+
     @cached_property
     def _wl_to_qe(self) -> dict[str, float]:
         """Computed once, cached for lifetime."""
@@ -1103,14 +1103,14 @@ from typing import Any
 @dc.dataclass
 class MyComponent(LoggingHelper):
     """One-line description."""
-    
+
     config_param: float
     _state: Any = dc.field(default=None, init=False)
-    
+
     def __post_init__(self) -> None:
         assert self.config_param > 0
         self._state = self._initialize()
-    
+
     def process(self) -> None:
         self.logger.info("Processing with %.2f", self.config_param)
 ```
@@ -1120,21 +1120,21 @@ class MyComponent(LoggingHelper):
 @dc.dataclass
 class MyProcess(ProcessBase):
     """Description of processing step."""
-    
+
     setting: float
-    
+
     @dc.dataclass
     class Scratch:
         state: int = 0
-    
+
     async def setup_iter(self, scratch: Scratch) -> None:
         self.logger.info("Setup complete")
-    
+
     async def step_iter(self, scratch: Scratch) -> list[Any] | None:
         scratch.state += 1
         await asyncio.sleep(0.1)
         return [f"Result {scratch.state}"]
-    
+
     async def teardown_iter(self, scratch: Scratch) -> None:
         self.logger.info("Teardown: final state %d", scratch.state)
 ```
@@ -1143,25 +1143,25 @@ class MyProcess(ProcessBase):
 
 Before presenting code to Arm, verify:
 
-✅ Type annotations on all public functions  
-✅ Docstrings for public API  
-✅ Logging instead of print  
-✅ Private methods prefixed with `_`  
-✅ Dataclasses for structured data  
-✅ Async for I/O operations  
-✅ Retry logic for hardware operations  
-✅ Tests for new features  
-✅ Ruff/pyright pass  
+✅ Type annotations on all public functions
+✅ Docstrings for public API
+✅ Logging instead of print
+✅ Private methods prefixed with `_`
+✅ Dataclasses for structured data
+✅ Async for I/O operations
+✅ Retry logic for hardware operations
+✅ Tests for new features
+✅ Ruff/pyright pass
 
 ### 3. Common Mistakes to Avoid
 
-❌ `time.sleep()` instead of `await asyncio.sleep()`  
-❌ `print()` instead of `self.logger.info()`  
-❌ Blocking I/O in async functions  
-❌ Missing type annotations  
-❌ Magic numbers (use constants)  
-❌ Broad `except Exception` without re-raise  
-❌ Mutable default arguments  
+❌ `time.sleep()` instead of `await asyncio.sleep()`
+❌ `print()` instead of `self.logger.info()`
+❌ Blocking I/O in async functions
+❌ Missing type annotations
+❌ Magic numbers (use constants)
+❌ Broad `except Exception` without re-raise
+❌ Mutable default arguments
 
 ---
 
@@ -1200,7 +1200,7 @@ Before presenting code to Arm, verify:
 
 ---
 
-**Analysis Complete.**  
+**Analysis Complete.**
 **Next Steps:** Share with AI assistants + new team members for onboarding.
 
 **Owner:** Surapat Ek-In (Arm)

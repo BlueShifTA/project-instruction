@@ -1,9 +1,9 @@
 # RELIABILITY_ENGINEER — Coding Profile
 
-**Role:** Reliability Engineer (Hardware/Devices Focus)  
-**Reference:** Analyzed from 97 commits (6-month analysis)  
-**Primary Focus:** Devices + Core + API  
-**Strength:** Hardware reliability, graceful failure handling, retry logic  
+**Role:** Reliability Engineer (Hardware/Devices Focus)
+**Reference:** Analyzed from 97 commits (6-month analysis)
+**Primary Focus:** Devices + Core + API
+**Strength:** Hardware reliability, graceful failure handling, retry logic
 **Analysis Date:** 2026-03-19
 
 ---
@@ -68,7 +68,7 @@ New device feature:
 def operation_with_retry():
     retry_count = 0
     max_retries = 3
-    
+
     while retry_count < max_retries:
         try:
             hardware.command(operation)
@@ -155,9 +155,9 @@ def test_pump_timeout_recovery():
         fail_count=2,  # Fail twice, then succeed
         response_delay=100  # Slow response
     )
-    
+
     result = operation_with_retry(mock_pump)
-    
+
     assert mock_pump.retry_count == 2
     assert mock_pump.reconnect_called
     assert result == expected_value
@@ -175,15 +175,15 @@ def test_pump_timeout_recovery():
 ```python
 class HardwareInterface:
     """Abstract interface all hardware must implement"""
-    
+
     def send_command(cmd: str) -> Result:
         """Send command, handle timeouts/disconnects"""
         pass
-    
+
     def reconnect() -> bool:
         """Restore connection"""
         pass
-    
+
     def status() -> HardwareStatus:
         """Current state (connected, busy, error)"""
         pass
@@ -216,7 +216,7 @@ hardware:
     modes: ["standard", "boot", "pressure"]
     timeout_ms: 5000
     retry_attempts: 3
-  
+
   pressure_sensor:
     enabled: true
     address: 0x20
@@ -277,7 +277,7 @@ class PumpController:
     """Abstracts pump communication (CAN/serial)"""
     def __init__(config):
         self.can = CANInterface(config.address)
-    
+
     def send_command(cmd):
         try:
             self.can.send(cmd)
@@ -427,7 +427,7 @@ See mono repo for working examples:
 
 ---
 
-**Profile Created:** 2026-03-19  
-**Based On:** 97+ commits over 6 months  
-**Confidence:** High (very consistent reliability-first pattern)  
+**Profile Created:** 2026-03-19
+**Based On:** 97+ commits over 6 months
+**Confidence:** High (very consistent reliability-first pattern)
 **Use This For:** Engineers building hardware integrations, distributed systems, or any critical-path code

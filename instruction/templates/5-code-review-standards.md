@@ -1,6 +1,6 @@
 # 5. Code Review & Quality Standards
 
-**Role:** Maintains code quality across the team  
+**Role:** Maintains code quality across the team
 **Context:** Startup growing from 2-15 engineers, preventing technical debt
 
 ---
@@ -53,10 +53,10 @@ Before requesting review, ensure:
 
 #### ✅ Good Feedback
 ```
-"This query might N+1 on large datasets. Consider using SELECT * with a join 
+"This query might N+1 on large datasets. Consider using SELECT * with a join
 or adding a limit. Run with EXPLAIN to verify."
 
-"Error message is unclear. Users won't know what 'Invalid token' means. 
+"Error message is unclear. Users won't know what 'Invalid token' means.
 Suggest: 'Your session expired. Please log in again.'"
 ```
 
@@ -209,9 +209,8 @@ These usually mean the design needs discussion, not just code fixes.
 
 ## Anti-Patterns to Avoid
 
-❌ **Rubber stamping:** "Looks good" without reading code  
-❌ **Perfectionism:** Requesting changes for personal style preferences  
-❌ **Slow feedback:** Reviewing after 5 days (context lost)  
-❌ **Anonymous feedback:** Always know who reviewed your code  
-❌ **Bike-shedding:** Debating tabs vs. spaces (use automation)  
-
+❌ **Rubber stamping:** "Looks good" without reading code
+❌ **Perfectionism:** Requesting changes for personal style preferences
+❌ **Slow feedback:** Reviewing after 5 days (context lost)
+❌ **Anonymous feedback:** Always know who reviewed your code
+❌ **Bike-shedding:** Debating tabs vs. spaces (use automation)

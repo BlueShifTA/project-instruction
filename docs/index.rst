@@ -24,7 +24,7 @@ The template includes:
 * MUI theme/provider setup and shared UI components
 * TanStack React Query and generated API hooks via Orval
 * Root ``just`` commands for install/test/lint/typecheck/CI checks
-* Sphinx docs plus agent-focused docs (``CLAUDE.md``, ``ProjectMap.md``)
+* Sphinx docs plus agent-focused docs (``CLAUDE.md``)
 
 Quick Start
 -----------

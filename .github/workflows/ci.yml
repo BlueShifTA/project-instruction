@@ -74,7 +74,13 @@ jobs:
         run: uv run ruff format --check projects/backend
 
       - name: Check for sys.path mutation hacks
-        run: uv run python scripts/check_no_sys_path_mutation.py
+        run: uv run python devops/check_no_sys_path_mutation.py
+
+      - name: Check for banned future annotations
+        run: uv run python devops/check_no_future_annotations.py
+
+      - name: Check for banned TYPE_CHECKING blocks
+        run: uv run python devops/check_no_type_checking.py
 
       - name: Type check with pyright
         run: uv run pyright projects/backend/package

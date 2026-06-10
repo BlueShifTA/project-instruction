@@ -13,7 +13,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 SEARCH_DIRS = [
     ROOT / "projects",
-    ROOT / "scripts",
+    ROOT / "devops",
 ]
 
 EXCLUDE_DIRS = {".venv", "__pycache__", "node_modules", ".git"}

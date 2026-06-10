@@ -1,6 +1,6 @@
 # 4. The Frontend Engineer
 
-**Role:** Builds user-facing interfaces that delight  
+**Role:** Builds user-facing interfaces that delight
 **Context:** Startup needing responsive, performant, accessible web applications
 
 **📍 Navigation:**
@@ -215,13 +215,13 @@ export function UserCard({
   onDelete,
 }: UserCardProps) {
   return (
-    <article 
+    <article
       className="border rounded-lg p-4 shadow-sm hover:shadow-md transition"
       aria-label={`User: ${name}`}
     >
       <h3 className="text-lg font-semibold">{name}</h3>
       <p className="text-gray-600 text-sm">{email}</p>
-      
+
       <div className="mt-4 flex gap-2">
         {onEdit && (
           <button
@@ -370,7 +370,7 @@ export function SignupForm() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
-    
+
     if (!res.ok) throw new Error('Signup failed');
   };
 

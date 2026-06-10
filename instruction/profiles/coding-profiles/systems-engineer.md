@@ -1,9 +1,9 @@
 # SYSTEMS_ENGINEER — Coding Profile
 
-**Role:** Systems Engineer (Systematic Decomposition)  
-**Reference:** Analyzed from 108 commits (6-month analysis)  
-**Primary Focus:** API + Frontend + Core + Postprocessing  
-**Strength:** Feature decomposition, incremental deployment, event loop safety  
+**Role:** Systems Engineer (Systematic Decomposition)
+**Reference:** Analyzed from 108 commits (6-month analysis)
+**Primary Focus:** API + Frontend + Core + Postprocessing
+**Strength:** Feature decomposition, incremental deployment, event loop safety
 **Analysis Date:** 2026-03-19
 
 ---
@@ -193,7 +193,7 @@ This allows camera operations to continue while exports happen in background.
 
 [System Feature 6/N] Introduce acquisition classes
 
-Created AcquisitionController abstraction to manage state and coordinate 
+Created AcquisitionController abstraction to manage state and coordinate
 multiple background tasks. Simplifies testing and makes logic reusable.
 ```
 
@@ -328,7 +328,7 @@ See mono repo for working examples:
 
 ---
 
-**Profile Created:** 2026-03-19  
-**Based On:** 108+ commits over 6 months  
-**Confidence:** Very High (very consistent numbered series pattern)  
+**Profile Created:** 2026-03-19
+**Based On:** 108+ commits over 6 months
+**Confidence:** Very High (very consistent numbered series pattern)
 **Use This For:** Engineers building large, complex features that need incremental rollout

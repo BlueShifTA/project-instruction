@@ -29,7 +29,7 @@ Use this checklist to audit whether your team is following the instructional sca
 
 **Score: __/5**
 
-**If <3:** Read `7-product-manager.md`  
+**If <3:** Read `7-product-manager.md`
 **Action:** Write your product brief (2 hours) and share with team
 
 ---
@@ -50,7 +50,7 @@ Use this checklist to audit whether your team is following the instructional sca
 
 **Score: __/5**
 
-**If <3:** Read `1-systems-architect.md`  
+**If <3:** Read `1-systems-architect.md`
 **Action:** Spend 1 hour sketching your system (diagram + schema)
 
 ---
@@ -71,7 +71,7 @@ Use this checklist to audit whether your team is following the instructional sca
 
 **Score: __/5**
 
-**If <3:** Read `5-code-review-standards.md`  
+**If <3:** Read `5-code-review-standards.md`
 **Action:** Set up pre-commit hooks or tighten review standards (3 hours)
 
 ---
@@ -137,7 +137,7 @@ Use this checklist to audit whether your team is following the instructional sca
 
 **Score: __/5**
 
-**If <3:** Read `6-devops-deployment.md`  
+**If <3:** Read `6-devops-deployment.md`
 **Action:** Set up basic monitoring (Sentry + logs) + rollback plan (2 hours)
 
 ---
@@ -158,7 +158,7 @@ Use this checklist to audit whether your team is following the instructional sca
 
 **Score: __/5**
 
-**If <3:** Read `8-communication-decision-making.md`  
+**If <3:** Read `8-communication-decision-making.md`
 **Action:** Create RACI matrix + post it (1 hour)
 
 ---
@@ -179,7 +179,7 @@ Use this checklist to audit whether your team is following the instructional sca
 
 **Score: __/5**
 
-**If <3:** Read `2-workflow-orchestration.md`  
+**If <3:** Read `2-workflow-orchestration.md`
 **Action:** Write team meeting schedule + async norms (1 hour)
 
 ---
@@ -332,6 +332,6 @@ Owner: [Name]
 
 ---
 
-**Last Updated:** 2026-03-19  
-**Review Cycle:** Quarterly (every 3 months)  
+**Last Updated:** 2026-03-19
+**Review Cycle:** Quarterly (every 3 months)
 **Expected Impact:** Team score improves 0.5-1.0 points per quarter with focused work

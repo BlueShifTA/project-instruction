@@ -13,8 +13,8 @@ Scope defaults to `all` unless specified: `$ARGUMENTS`
 ## Steps
 
 1. **Determine scope** from arguments:
-   - `backend` → `just install-backend`
-   - `frontend` → `just install-frontend`
+   - `backend` → `uv sync --all-packages --all-groups`
+   - `frontend` → `cd projects/frontend && pnpm install --frozen-lockfile`
    - `all` or empty → `just install`
 
 2. Run the appropriate install command.

@@ -47,7 +47,7 @@
 
 **Process**
 - [ ] Pre-commit hooks passed — no `--no-verify`, no `SKIP=<hook>`
-- [ ] Relevant docs updated (`CLAUDE.md`, `ProjectMap.md`, or `instruction/`)
+- [ ] Relevant docs updated (`CLAUDE.md`, `README.md`, or `instruction/`)
 
 ## Related
 

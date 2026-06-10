@@ -38,8 +38,8 @@ my-api/
 └── .gitignore
 ```
 
-**Files count:** 15 files  
-**Complexity:** Low  
+**Files count:** 15 files
+**Complexity:** Low
 **Default database:** SQLite (in src/app.db)
 
 **How to scaffold:**
@@ -103,8 +103,8 @@ my-dashboard/
 └── README.md
 ```
 
-**Files count:** 25 files  
-**Complexity:** Medium  
+**Files count:** 25 files
+**Complexity:** Medium
 **Default database:** SQLite (backend)
 
 **How to scaffold:**
@@ -171,8 +171,8 @@ my-cli-tool/
 └── .gitignore
 ```
 
-**Files count:** 12 files  
-**Complexity:** Low  
+**Files count:** 12 files
+**Complexity:** Low
 **Default database:** None (or SQLite if needed)
 
 **How to scaffold:**
@@ -229,8 +229,8 @@ my-pipeline/
 └── .gitignore
 ```
 
-**Files count:** 16 files  
-**Complexity:** Medium  
+**Files count:** 16 files
+**Complexity:** Medium
 **Default database:** SQLite (transform data)
 
 **How to scaffold:**
@@ -287,8 +287,8 @@ my-microservice/
 └── .gitignore
 ```
 
-**Files count:** 16 files  
-**Complexity:** Low (code) + Medium (Docker)  
+**Files count:** 16 files
+**Complexity:** Low (code) + Medium (Docker)
 **Default database:** PostgreSQL (or SQLite for MVP)
 
 **How to scaffold:**
@@ -391,6 +391,6 @@ For any project type:
 
 ---
 
-**Time to choose:** 5 minutes  
-**Time to scaffold:** 30-60 minutes  
+**Time to choose:** 5 minutes
+**Time to scaffold:** 30-60 minutes
 **Status:** Ready to generate boilerplate

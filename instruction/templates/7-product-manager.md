@@ -1,6 +1,6 @@
 # 7. The Product Manager
 
-**Role:** Defines what to build and why  
+**Role:** Defines what to build and why
 **Context:** Startup with limited resources, need to ship the right things
 
 **📍 Navigation:**
@@ -59,7 +59,7 @@ After interviews, write your hypothesis:
 Hypothesis Template:
 
 We believe that [target user] experiences a problem [problem description]
-because [root cause]. 
+because [root cause].
 
 We hypothesize that if we build [solution], they will [desired outcome].
 
@@ -71,10 +71,10 @@ Success metrics:
 **Example:**
 
 ```
-We believe that marketing teams spend 2-3 hours per week manually tracking 
+We believe that marketing teams spend 2-3 hours per week manually tracking
 campaign performance across platforms because integrations don't exist.
 
-We hypothesize that if we build a unified dashboard showing performance 
+We hypothesize that if we build a unified dashboard showing performance
 across Google Ads, Facebook, LinkedIn, and email in one place, they will:
 - Reduce tracking time to 15 minutes
 - Make better decisions (cross-channel optimization)
@@ -215,10 +215,10 @@ Feature: Dashboard
 
 ### Watch for These Anti-Patterns
 
-❌ **Vanity metrics:** "We have 10,000 downloads!" (How many are active?)  
-❌ **Delayed feedback:** "We'll measure success in 6 months" (Too late to pivot)  
-❌ **Confounded metrics:** "Revenue increased; was it our feature or marketing?"  
-❌ **Leading without lagging:** "Users click the button a lot!" (Do they stay?)  
+❌ **Vanity metrics:** "We have 10,000 downloads!" (How many are active?)
+❌ **Delayed feedback:** "We'll measure success in 6 months" (Too late to pivot)
+❌ **Confounded metrics:** "Revenue increased; was it our feature or marketing?"
+❌ **Leading without lagging:** "Users click the button a lot!" (Do they stay?)
 
 ---
 
@@ -230,11 +230,11 @@ Feature: Dashboard
 # Feature: Multi-Platform Dashboard
 
 ## Problem
-Users spend 2-3 hours manually gathering performance data from 5 different 
+Users spend 2-3 hours manually gathering performance data from 5 different
 tools. They want a single view.
 
 ## Solution
-Dashboard showing metrics from Google Ads, Facebook, LinkedIn, and email 
+Dashboard showing metrics from Google Ads, Facebook, LinkedIn, and email
 in one place. Updated every 4 hours.
 
 ## User Stories
@@ -277,9 +277,9 @@ in one place. Updated every 4 hours.
 
 If engineering pushes back, listen:
 
-❌ "This is too vague" → Write a better PRD  
-❌ "This violates our architecture" → You need to understand the constraint  
-❌ "This will take 8 weeks" → Maybe you're asking for too much (MVP?)  
+❌ "This is too vague" → Write a better PRD
+❌ "This violates our architecture" → You need to understand the constraint
+❌ "This will take 8 weeks" → Maybe you're asking for too much (MVP?)
 
 ---
 
@@ -313,4 +313,3 @@ Early startups (pre-20 people): Product + Marketing + Design may be one person.
 | Churn rate | Decreasing | Product is getting better |
 | NPS | 50+ | Customers love the product |
 | Feature ship velocity | 1-2 per sprint | Momentum matters |
-

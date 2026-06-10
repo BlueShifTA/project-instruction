@@ -1,9 +1,9 @@
 # FRONTEND_ENGINEER — Coding Profile
 
-**Role:** Frontend Engineer (Feature Completeness & UX Focus)  
-**Reference:** Analyzed from 48 commits (6-month analysis)  
-**Primary Focus:** React/Next.js + API integration  
-**Strength:** Feature completeness, UX focus, comprehensive error handling  
+**Role:** Frontend Engineer (Feature Completeness & UX Focus)
+**Reference:** Analyzed from 48 commits (6-month analysis)
+**Primary Focus:** React/Next.js + API integration
+**Strength:** Feature completeness, UX focus, comprehensive error handling
 **Analysis Date:** 2026-03-19
 
 ---
@@ -159,27 +159,27 @@ describe('CombineVialsButton', () => {
         render(<CombineVialsButton enabled={true} />);
         expect(screen.getByRole('button')).toBeInTheDocument();
     });
-    
+
     it('disabled when no selection', () => {
         render(<CombineVialsButton selected={[]} />);
         expect(screen.getByRole('button')).toBeDisabled();
     });
-    
+
     it('calls API with selected vials', async () => {
         const mockApi = mock();
         render(<CombineVialsButton api={mockApi} selected={[1,2]} />);
-        
+
         await userEvent.click(screen.getByRole('button'));
-        
+
         expect(mockApi.post).toHaveBeenCalledWith('/combine', {vials: [1,2]});
     });
-    
+
     it('shows error on API failure', async () => {
         const mockApi = mockFailed(409);
         render(<CombineVialsButton api={mockApi} />);
-        
+
         await userEvent.click(screen.getByRole('button'));
-        
+
         expect(screen.getByText(/invalid/i)).toBeInTheDocument();
     });
 });
@@ -337,7 +337,7 @@ See mono repo for working examples:
 
 ---
 
-**Profile Created:** 2026-03-19  
-**Based On:** 48+ commits over 6 months  
-**Confidence:** High (very consistent ticket-driven approach)  
+**Profile Created:** 2026-03-19
+**Based On:** 48+ commits over 6 months
+**Confidence:** High (very consistent ticket-driven approach)
 **Use This For:** Frontend engineers, UI developers, product engineers

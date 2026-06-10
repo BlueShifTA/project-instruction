@@ -1,9 +1,9 @@
 # DATA_ENGINEER — Coding Profile
 
-**Role:** Data Engineer (Analytics & Data Science Focus)  
-**Reference:** Analyzed from 55 commits (6-month analysis)  
-**Primary Focus:** API + Frontend (analytics focus)  
-**Strength:** Data processing, iterative refinement, scientific computing  
+**Role:** Data Engineer (Analytics & Data Science Focus)
+**Reference:** Analyzed from 55 commits (6-month analysis)
+**Primary Focus:** API + Frontend (analytics focus)
+**Strength:** Data processing, iterative refinement, scientific computing
 **Analysis Date:** 2026-03-19
 
 ---
@@ -68,21 +68,21 @@ Commit 4: Integration
 ```python
 def concentration_predict(unknown_samples, known_samples):
     """Predict concentration from calibration"""
-    
+
     # Edge cases FIRST
     if len(unknown_samples) == 0:
         raise ValueError("Need at least 1 unknown sample")
-    
+
     if len(known_samples) == 0:
         raise ValueError("Need calibration data")
-    
+
     # Normal case
     calibration = build_calibration_curve(known_samples)
     predictions = apply_calibration(unknown_samples, calibration)
-    
+
     # Output validation
     assert all(0 <= p <= 100 for p in predictions)
-    
+
     return predictions
 ```
 
@@ -153,19 +153,19 @@ tests/
 ```python
 def test_concentration_prediction():
     """Test prediction with different sample counts"""
-    
+
     # Edge case: 1 unknown sample (minimum)
     pred_1 = predict([sample1], [cal1, cal2, cal3])
     assert 0 <= pred_1 <= 100
-    
+
     # Edge case: 0 unknown samples (invalid)
     with pytest.raises(ValueError):
         predict([], [cal1, cal2, cal3])
-    
+
     # Edge case: All identical samples
     pred_same = predict([s, s, s], [c, c, c])
     assert pred_same == expected_value
-    
+
     # Normal case: Multiple unknowns
     pred_multi = predict([s1, s2, s3], [c1, c2, c3])
     assert len(pred_multi) == 3
@@ -283,14 +283,14 @@ def evaluate(data: EvaluationRequest):
     # Input validation
     if not data.samples:
         raise ValueError("Need samples")
-    
+
     # Processing
     result = process(data)
-    
+
     # Output validation
     assert 0 <= result.concentration <= 100
     assert len(result.artifacts) > 0
-    
+
     return result
 ```
 
@@ -336,7 +336,7 @@ See mono repo for working examples:
 
 ---
 
-**Profile Created:** 2026-03-19  
-**Based On:** 55+ commits over 6 months  
-**Confidence:** High (very consistent data science approach)  
+**Profile Created:** 2026-03-19
+**Based On:** 55+ commits over 6 months
+**Confidence:** High (very consistent data science approach)
 **Use This For:** Data engineers, data scientists, analytics teams

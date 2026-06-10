@@ -2,7 +2,7 @@
 
 Coding profile for template-safe React/Next.js frontend development (MUI + Tailwind hybrid)
 
-Generated: 2026-02-23  
+Generated: 2026-02-23
 Scope: `project-template` frontend alignment inspired by `mono/projects/frontend` patterns
 
 ---
@@ -314,9 +314,9 @@ Add shared frontend UI foundation for template
 Template baseline commands:
 
 - `just run-frontend`
-- `just frontend-lint`
-- `just frontend-typecheck`
-- `just frontend-build`
+- `just test-frontend`
+- `just typecheck`
+- `just lint`
 - `just generate-frontend-types`
 - `cd projects/frontend && pnpm run api`
 

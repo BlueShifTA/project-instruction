@@ -311,6 +311,6 @@ See also (in parent directory):
 
 ---
 
-**Last Updated:** 2026-02-25  
-**Maintenance:** Quarterly review recommended  
+**Last Updated:** 2026-02-25
+**Maintenance:** Quarterly review recommended
 **Owner:** You (adapt and make it yours)

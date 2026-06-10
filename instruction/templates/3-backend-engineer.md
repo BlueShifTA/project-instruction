@@ -1,6 +1,6 @@
 # 3. The Backend Engineer
 
-**Role:** Builds reliable, maintainable server systems  
+**Role:** Builds reliable, maintainable server systems
 **Context:** Startup needing production-grade APIs, databases, and real-time systems
 
 **📍 Navigation:**
@@ -99,10 +99,10 @@ Before shipping ANY backend code:
 - **Late (12+ months):** Refactor for scale
 
 ### When to Refactor
-✅ Code is slowing you down (hard to add features)  
-✅ Tests are failing regularly  
-✅ Regressions happen > 1x per sprint  
-❌ Code "feels ugly" (doesn't count)  
+✅ Code is slowing you down (hard to add features)
+✅ Tests are failing regularly
+✅ Regressions happen > 1x per sprint
+❌ Code "feels ugly" (doesn't count)
 
 ### Scaling Decisions
 - **Single database until you have 100k+ users**
@@ -160,7 +160,7 @@ class UserResponse(BaseModel):
 async def create_user(user_data: UserCreate) -> UserResponse:
     """Create a new user. Raises HTTPException if email already exists."""
     logger.info(f"Creating user with email={user_data.email}")
-    
+
     # Check for duplicates
     existing = await db.users.find_one({"email": user_data.email})
     if existing:
@@ -169,7 +169,7 @@ async def create_user(user_data: UserCreate) -> UserResponse:
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Email {user_data.email} already registered"
         )
-    
+
     # Create with explicit transaction
     try:
         result = await db.users.insert_one({
@@ -178,7 +178,7 @@ async def create_user(user_data: UserCreate) -> UserResponse:
             "created_at": datetime.now(timezone.utc)
         })
         logger.info(f"User created: id={result.inserted_id}")
-        
+
         return UserResponse(
             id=result.inserted_id,
             email=user_data.email,
@@ -214,7 +214,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 async def call_external_api(user_id: str) -> dict:
     """Call external API with retry logic. Raises TimeoutError after 3 attempts."""
     logger.info(f"Calling external API for user={user_id}")
-    
+
     try:
         response = await httpx.get(
             f"https://api.external.com/users/{user_id}",
@@ -244,10 +244,10 @@ async def call_external_api(user_id: str) -> dict:
 async def get_user_with_posts(user_id: int) -> dict:
     """Get user + all their posts in ONE query."""
     logger.info(f"Fetching user and posts: user_id={user_id}")
-    
+
     # Single query: join users and posts
     query = """
-    SELECT 
+    SELECT
         u.id, u.email, u.name,
         p.id as post_id, p.title, p.content
     FROM users u
@@ -255,13 +255,13 @@ async def get_user_with_posts(user_id: int) -> dict:
     WHERE u.id = $1
     ORDER BY p.created_at DESC
     """
-    
+
     rows = await db.fetch(query, user_id)
-    
+
     if not rows:
         logger.warning(f"User not found: {user_id}")
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     # Restructure to user + posts
     user = {
         "id": rows[0]["id"],
@@ -273,7 +273,7 @@ async def get_user_with_posts(user_id: int) -> dict:
             if row["post_id"] is not None
         ]
     }
-    
+
     logger.info(f"Fetched user {user_id} with {len(user['posts'])} posts")
     return user
 
@@ -301,14 +301,14 @@ from unittest.mock import AsyncMock, patch
 async def test_create_user_success():
     """Test successful user creation."""
     user_data = UserCreate(email="test@example.com", name="Test User")
-    
+
     # Mock database insert
     mock_db = AsyncMock()
     mock_db.insert_one.return_value = AsyncMock(inserted_id=123)
-    
+
     with patch("app.db.users", mock_db):
         response = await create_user(user_data)
-    
+
     assert response.id == 123
     assert response.email == "test@example.com"
     mock_db.insert_one.assert_called_once()
@@ -317,15 +317,15 @@ async def test_create_user_success():
 async def test_create_user_duplicate_email():
     """Test duplicate email returns 409."""
     user_data = UserCreate(email="existing@example.com", name="Test")
-    
+
     # Mock database: email already exists
     mock_db = AsyncMock()
     mock_db.find_one.return_value = {"id": 1, "email": "existing@example.com"}
-    
+
     with patch("app.db.users", mock_db):
         with pytest.raises(HTTPException) as exc_info:
             await create_user(user_data)
-        
+
         assert exc_info.value.status_code == 409
         assert "already registered" in exc_info.value.detail
 ```

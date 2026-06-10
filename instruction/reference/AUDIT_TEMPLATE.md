@@ -292,11 +292,11 @@ class ImageProcessor(LoggingHelper):
     exposure: float
     retry_count: int = 3
     _state: dict = dataclasses.field(default_factory=dict)
-    
+
     def __post_init__(self) -> None:
         """Validate settings."""
         assert self.exposure > 0
-    
+
     async def process(self, image: np.ndarray) -> ProcessedImage:
         """Main processing logic."""
         self.logger.info("Processing with exposure %.2f", self.exposure)
@@ -389,10 +389,10 @@ def test_record_and_query_events(tmp_path):
     """Test full DB lifecycle."""
     db_path = tmp_path / "test.db"
     db = Database(db_path)
-    
+
     # Record event
     event_id = db.record_event(Event(type="test", data={"key": "value"}))
-    
+
     # Query back
     events = db.get_events(limit=10)
     assert len(events) == 1
@@ -447,16 +447,16 @@ chmod 644 ~/.projectname/project.db  # restore
 def test_regression_infinite_spinner_empty_data():
     """
     Regression test for issue #42: infinite spinner on fresh install.
-    
+
     Bug: MetricsSection showed loading spinner forever when API
     returned empty array (fresh install, no data yet).
-    
+
     Fix: Add explicit empty state check.
     """
     response = client.get("/api/dashboard/metrics")
     assert response.status_code == 200
     data = response.json()
-    
+
     # Even with empty data, API should return valid structure
     assert "metrics" in data
     assert isinstance(data["metrics"], list)
@@ -861,8 +861,8 @@ Fill this out at the end of Phase 4:
 
 **Target:** >90% overall before declaring "production ready"
 
-**P0 Issues:** Any category <50% = must fix before merge  
-**P1 Issues:** Any category <80% = should fix before production  
+**P0 Issues:** Any category <50% = must fix before merge
+**P1 Issues:** Any category <80% = should fix before production
 **P2 Issues:** Any category <90% = could improve in next iteration
 
 ---
@@ -898,6 +898,6 @@ If you see ANY of these during audit, STOP and fix immediately:
 
 ---
 
-**Last Updated:** 2026-02-20  
+**Last Updated:** 2026-02-20
 **Owner:** Surapat Ek-In (Arm)
 **Next Review:** After completing 5 audits using this template

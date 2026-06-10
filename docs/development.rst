@@ -35,9 +35,9 @@ Run tests::
 
    just test
 
-Coverage (80 percent default threshold)::
+Coverage (80 percent threshold, enforced in CI)::
 
-   just test-cov
+   just run-ci
 
 Direct coverage command (current package path)::
 
@@ -66,9 +66,9 @@ Direct equivalent::
 
 Frontend checks:
 
-* ``just frontend-lint``
-* ``just frontend-typecheck``
-* ``just frontend-build``
+* ``cd projects/frontend && pnpm run lint``
+* ``cd projects/frontend && pnpm run typecheck``
+* ``cd projects/frontend && pnpm run build``
 * ``cd projects/frontend && pnpm run prettier:check``
 
 Frontend lint config lives in ``projects/frontend/eslint.config.mjs``.
@@ -119,14 +119,10 @@ Run all hooks manually::
 
    uv run pre-commit run --config devops/.pre-commit-config.yaml --all-files
 
-Project Map and Agent Docs
---------------------------
+Agent Docs
+----------
 
-Regenerate the fast-search map after structural changes::
-
-   just project-map
-
-Template users should update ``CLAUDE.md`` and ``ProjectMap.md`` after replacing template examples.
+Template users should update ``CLAUDE.md`` and ``README.md`` after replacing template examples.
 
 Documentation
 -------------

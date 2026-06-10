@@ -21,16 +21,15 @@ Scope defaults to `all` unless specified: `$ARGUMENTS`
    **Backend:**
    ```bash
    just test-backend
-   just typecheck-python
-   just format-check
+   PYTHONPATH=projects/backend uv run mypy projects/backend/package
+   uv run pyright projects/backend/package
+   uv run ruff format --check projects/backend
    ```
 
    **Frontend:**
    ```bash
    just test-frontend
-   just typecheck-frontend
-   just lint-frontend
-   just format-check
+   cd projects/frontend && pnpm run typecheck && pnpm run lint && pnpm run prettier:check
    ```
 
    **All:**

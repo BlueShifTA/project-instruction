@@ -1,6 +1,6 @@
 # 8. Communication & Decision-Making Frameworks
 
-**Role:** Enables the team to move fast without chaos  
+**Role:** Enables the team to move fast without chaos
 **Context:** Startup where unclear decisions create weeks of wasted work
 
 ---
@@ -61,7 +61,7 @@ Options considered:
 1. PostgreSQL (relational)
    ✅ ACID compliance, mature, proven at scale
    ❌ Requires schema design upfront
-   
+
 2. MongoDB (document database)
    ✅ Flexible schema, horizontal scaling
    ❌ No transactions, complex queries harder
@@ -138,18 +138,18 @@ Timeline: Start implementation by [date]
 **Example (Slack message):**
 
 > **Decision: We're building for enterprise customers first, not SMB**
-> 
+>
 > Why:
 > - Market is 10x larger ($100B vs. $10B)
 > - Customer demand confirmed in interviews (80% of feedback)
 > - Competitors underserving this segment
-> 
+>
 > What changes:
 > 👤 PM: Prioritize compliance/SSO features
 > 🔧 Eng: Plan for white-label architecture
 > 💰 Sales: Start targeting enterprise buyer personas
 > 📊 Metrics: Track enterprise vs. SMB conversion separately
-> 
+>
 > Questions? Reply in thread.
 
 ---
@@ -326,4 +326,3 @@ No meeting needed.
 | Team disagreement (healthy) | High | Diversity of opinion |
 | Meeting time per week | < 5 hours | Protect focus time |
 | Documentation completeness | > 90% | Async reference |
-

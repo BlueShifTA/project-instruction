@@ -22,10 +22,10 @@ export default function Home() {
         <BackendHealthSection />
         <Section title="Commands" description="Template-safe aliases and core tasks.">
           <p className="font-mono text-sm">just lint / test / run-ci</p>
-          <p className="mt-2 font-mono text-sm">just frontend-lint / frontend-build</p>
+          <p className="mt-2 font-mono text-sm">just format / typecheck</p>
         </Section>
-        <Section title="Agent Docs" description="Scaffold instructions and project map.">
-          <p className="font-mono text-sm">CLAUDE.md + ProjectMap.md</p>
+        <Section title="Agent Docs" description="Scaffold instructions and coding rules.">
+          <p className="font-mono text-sm">CLAUDE.md</p>
           <p className="mt-2 text-sm text-slate-500">
             Add feature-specific rules without leaking product details into the template.
           </p>

@@ -9,8 +9,8 @@
 
 ### 1. project-template
 
-**Path:** `~/Project/project-template`  
-**Type:** Full-stack monorepo  
+**Path:** `~/Project/project-template`
+**Type:** Full-stack monorepo
 **Best For:** Web applications with comprehensive documentation needs
 
 **Stack:**
@@ -64,8 +64,8 @@ project-template/
 
 ### 2. fastapi-nextjs-template
 
-**Path:** `~/Project/fastapi-nextjs-template`  
-**Type:** Full-stack dual-repo  
+**Path:** `~/Project/fastapi-nextjs-template`
+**Type:** Full-stack dual-repo
 **Best For:** Simpler web apps without monorepo complexity
 
 **Stack:**
@@ -123,8 +123,8 @@ fastapi-nextjs-template/
 
 ### 3. spinnaker-pyside-template
 
-**Path:** `~/Project/spinnaker-pyside-template`  
-**Type:** Desktop application  
+**Path:** `~/Project/spinnaker-pyside-template`
+**Type:** Desktop application
 **Best For:** Camera/hardware control GUIs
 
 **Stack:**
@@ -258,7 +258,7 @@ spinnaker-pyside-template/
 
 ### Coverage Standards
 - **Minimum:** 80%
-- **Command:** `just test-cov 80`
+- **Command:** `just run-ci` (coverage gate at 80%)
 - **Reports:** Terminal + XML (for CI)
 - **Exclusions:** Boilerplate (`__main__`, `TYPE_CHECKING`, etc.)
 
@@ -267,16 +267,16 @@ spinnaker-pyside-template/
 ## ❌ MISSING COMPONENTS (NOT YET IMPLEMENTED)
 
 ### .claude/ Directory
-**Status:** Not present in any template  
-**Purpose:** Claude Code context and shortcuts  
+**Status:** Not present in any template
+**Purpose:** Claude Code context and shortcuts
 **Planned Contents:**
 - `CONTEXT.md` - Project-specific background
 - `SHORTCUTS.md` - Common workflows
 - `EXAMPLES.md` - Code pattern examples
 
 ### .devcontainer/ Directory
-**Status:** Not present in any template  
-**Purpose:** VS Code Dev Container configuration  
+**Status:** Not present in any template
+**Purpose:** VS Code Dev Container configuration
 **Planned Contents:**
 - `devcontainer.json` - Container config
 - `Dockerfile` - Dev environment setup
@@ -381,5 +381,5 @@ just install
 ---
 
 **Owner:** Surapat Ek-In (Arm)
-**Last Updated:** 2026-02-20 12:11 PM CET  
+**Last Updated:** 2026-02-20 12:11 PM CET
 **Next Review:** After Phase 1 completion

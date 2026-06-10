@@ -72,7 +72,7 @@ Use bootstrap to rename placeholders and the backend ``package`` module::
 
 For automation/non-interactive use, call the script directly with explicit args::
 
-   uv run python scripts/bootstrap.py --project-name "My App" --project-slug my-app --python-package my_app --non-interactive
+   just bootstrap --project-name "My App" --project-slug my-app --python-package my_app --non-interactive
 
 Post-First-Build Cleanup (Required)
 -----------------------------------
@@ -84,7 +84,7 @@ After your first successful build and smoke test:
       just template-clean
 
 2. Remove/replace template examples (routes, components, tests, docs)
-3. Update ``CLAUDE.md`` and ``ProjectMap.md`` to describe your real project
+3. Update ``CLAUDE.md`` and ``README.md`` to describe your real project
 
 Project Structure (High Level)
 ------------------------------
@@ -102,10 +102,10 @@ Project Structure (High Level)
    │       ├── src/components/
    │       ├── src/lib/generated/ # Orval-generated client/models
    │       └── src/theme/
-   ├── scripts/
+   ├── devops/                    # Pre-commit config, bootstrap/check scripts
+   ├── instruction/               # Role templates, profiles, guides, reference
    ├── justfile
-   ├── CLAUDE.md
-   └── ProjectMap.md
+   └── CLAUDE.md
 
 Next Steps
 ----------

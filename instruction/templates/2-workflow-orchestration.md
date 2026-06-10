@@ -63,12 +63,12 @@
 
 ## Guardrails for Startup Teams
 
-✅ **Plan mode is default** — specs prevent expensive rework  
-✅ **Subagents offload research** — main context stays focused  
-✅ **Self-correction is automatic** — lessons prevent repeated mistakes  
-✅ **Verification gates shipping** — no "works for me" handoffs  
-✅ **Elegance is expected** — but not at the cost of shipping  
-✅ **Bugs are owned, not delegated** — autonomous problem-solving  
+✅ **Plan mode is default** — specs prevent expensive rework
+✅ **Subagents offload research** — main context stays focused
+✅ **Self-correction is automatic** — lessons prevent repeated mistakes
+✅ **Verification gates shipping** — no "works for me" handoffs
+✅ **Elegance is expected** — but not at the cost of shipping
+✅ **Bugs are owned, not delegated** — autonomous problem-solving
 
 ---
 
@@ -81,4 +81,3 @@
 | Plan → Ship time | 3-5 days | Specs prevent rework |
 | Code review notes | 1-2 per PR | High initial quality |
 | Peer corrections | < 1 per week | Learning is applied |
-

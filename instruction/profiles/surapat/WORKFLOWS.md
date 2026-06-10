@@ -157,7 +157,7 @@
 1. **Read all 8 templates** (4-6 hours total)
    - Mark sections that fit your culture
    - Mark sections that don't (delete or modify)
-   
+
 2. **Create a team playbook document:**
    ```
    OUR_PLAYBOOK.md
@@ -482,6 +482,6 @@ Team feels broken?
 
 ---
 
-**Version:** 1.0  
-**Last Updated:** 2026-02-25  
+**Version:** 1.0
+**Last Updated:** 2026-02-25
 **Next Review:** 2026-05-25 (quarterly)

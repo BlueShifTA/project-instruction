@@ -8,8 +8,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 
 def _slugify(value: str) -> str:
     slug = re.sub(r"[^a-z0-9-]+", "-", value.lower()).strip("-")
-    slug = re.sub(r"-{2,}", "-", slug)
-    return slug
+    return re.sub(r"-{2,}", "-", slug)
 
 
 def _package_name(value: str) -> str:
@@ -33,8 +32,6 @@ def _iter_target_files(package_name: str) -> list[pathlib.Path]:
     targets = [
         ROOT / "README.md",
         ROOT / "CLAUDE.md",
-        ROOT / "CONTRIBUTING.md",
-        ROOT / "ProjectMap.md",
         ROOT / "pyproject.toml",
         ROOT / "justfile",
         ROOT / "devops/.pre-commit-config.yaml",

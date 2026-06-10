@@ -1,6 +1,6 @@
 # 6. DevOps & Deployment Engineer
 
-**Role:** Keeps systems running reliably, automates operational toil  
+**Role:** Keeps systems running reliably, automates operational toil
 **Context:** Startup needing to ship multiple times per day without sweating bullets
 
 ---
@@ -308,4 +308,3 @@ High-cost areas:
 | Mean time to recovery | < 30 min | Customer impact minimized |
 | Change failure rate | < 15% | Quality gate works |
 | Uptime | 99.9% | Reliability |
-

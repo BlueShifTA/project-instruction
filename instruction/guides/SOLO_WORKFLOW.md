@@ -1,6 +1,6 @@
 # Solo Consultant Workflow
 
-**Goal:** Rough requirements → Live MVP in 6-8 hours  
+**Goal:** Rough requirements → Live MVP in 6-8 hours
 **Prerequisites:** Claude Code + Codex + TECH_DECISIONS.md + PROJECT_QUICKSTART.md
 
 ---
@@ -19,7 +19,7 @@
    ```
    "Here are rough requirements:
     [paste requirements]
-    
+
     Help me clarify:
     1. Scope: What's MVP? What's later?
     2. Constraints: Performance? Scale? Budget?
@@ -98,11 +98,11 @@
 1. Use Claude Code:
    ```
    "Design a [domain] system:
-    
+
     Requirements: [from Phase 1]
     Tech Stack: Python + FastAPI + SQLite
     Constraints: [from Phase 1]
-    
+
     Provide:
     1. MVP scope (what ships first, what's later)
     2. Data model (3-5 main entities)
@@ -157,12 +157,12 @@
 2. Use Codex:
    ```
    "Generate [PROJECT_TYPE] for [domain]:
-    
+
     Requirements: [from Phase 1]
     Models: [from Phase 3]
     Endpoints: [from Phase 3]
     Database: SQLite + SQLAlchemy
-    
+
     Include:
     - Project structure (folders + files)
     - main.py (FastAPI app)
@@ -289,12 +289,12 @@ Iterations: 10
 2. Use Codex:
    ```
    "Generate deployment files for FastAPI + SQLite:
-    
+
     - Dockerfile
     - docker-compose.yml
     - GitHub Actions workflow (deploy on push)
     - .env.example
-    
+
     Target: [Railway/Render/Heroku]"
    ```
 
@@ -439,6 +439,6 @@ Once MVP is live:
 
 ---
 
-**Total Time:** 6-8 hours from requirements to live MVP  
-**Status:** Ready to use  
+**Total Time:** 6-8 hours from requirements to live MVP
+**Status:** Ready to use
 **Next:** Phase 1 with AGENT_ADAPTATION_PROMPTS.md

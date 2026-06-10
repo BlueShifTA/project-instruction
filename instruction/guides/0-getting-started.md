@@ -366,8 +366,8 @@ After you've picked your scenario, use this checklist to track progress:
 
 ---
 
-**Last Updated:** 2026-03-19  
-**Status:** Ready for adoption  
+**Last Updated:** 2026-03-19
+**Status:** Ready for adoption
 **Adoption Rate Target:** 60-70% team usage within 3 months
 
 ---
@@ -415,16 +415,16 @@ When you level up, you don't abandon old templates. You ADD new ones.
 Pre-Product (1 person)
   → Add template #3 (backend engineer role)
   → Add template #4 (frontend engineer role)
-  
+
 MVP Phase (2-5 people)
   → Add template #5 (code review standards)
   → Add template #6 (devops)
   → Add template #8 (decision frameworks)
-  
+
 Post-MVP (5-10 people)
   → Full adoption of all 8 templates
   → Start quarterly CHECKLIST audits
-  
+
 Growth (10-15+ people)
   → All templates active
   → Monthly/quarterly process reviews

@@ -276,6 +276,6 @@ Setup: 1 hour
 
 ---
 
-**Time to decide:** 15 minutes (use defaults)  
-**Time to change later:** 4-8 hours (migration is possible)  
+**Time to decide:** 15 minutes (use defaults)
+**Time to change later:** 4-8 hours (migration is possible)
 **Status:** Ready to build

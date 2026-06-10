@@ -35,7 +35,7 @@ PHASE 7: CLEANUP & COMMIT
 
 ## Phase 0: PLAN MODE (30-60 min)
 
-**Model:** Opus 4.6 (complex planning)  
+**Model:** Opus 4.6 (complex planning)
 **Goal:** Strategic thinking before execution
 
 ### 0.1 Define the One Problem
@@ -76,7 +76,7 @@ Before coding, scan the anti-pattern tables:
 
 ## Phase 1: STRUCTURAL PLAN (30-60 min)
 
-**Model:** Opus or Sonnet (architecture work)  
+**Model:** Opus or Sonnet (architecture work)
 **Goal:** Concrete structure ready to execute
 
 ### 1.1 File Structure
@@ -127,7 +127,7 @@ class MyConfig:
     """Prefer immutable dataclasses with descriptive names."""
     setting: float
     _private_state: int = 0
-    
+
     def __post_init__(self) -> None:
         # Validation in __post_init__
         assert self.setting > 0
@@ -253,7 +253,7 @@ sessions_spawn --task "Execute <task> per plan-YYYY-MM-DD-<task>.md"
 
 ## Phase 3: EXECUTE (Hours to Days)
 
-**Model:** Sonnet (general), Haiku (quick fixes), Opus (complex refactors)  
+**Model:** Sonnet (general), Haiku (quick fixes), Opus (complex refactors)
 **Goal:** Build according to the structural plan
 
 ### 3.1 Foundation First (Day 1)
@@ -281,7 +281,7 @@ class ImageProcessor(LoggingHelper):
     """Process images with configurable settings."""
     exposure: float
     retry_count: int = 3
-    
+
     async def process(self, image: np.ndarray) -> ProcessedImage:
         """Main processing logic."""
         self.logger.info("Processing with exposure %.2f", self.exposure)
@@ -394,7 +394,7 @@ uvicorn projectname.api:app --host 0.0.0.0 --port 8001
 
 ## Phase 4: TEST & AUDIT (Hours)
 
-**Model:** Sonnet or Haiku (verification work)  
+**Model:** Sonnet or Haiku (verification work)
 **Goal:** Verify implementation against plan + quality standards
 
 ### 4.1 Use AUDIT_TEMPLATE.md
@@ -443,7 +443,7 @@ def test_regression_issue_123():
 
 ## Phase 5: IMPROVEMENT LIST (30 min)
 
-**Model:** Sonnet (analysis)  
+**Model:** Sonnet (analysis)
 **Goal:** Identify gaps and prioritize next iteration
 
 ### 5.1 What's Missing?
@@ -481,7 +481,7 @@ Review audit results:
 
 ## Phase 6: LOOP (Until Satisfied)
 
-**Model:** Context-appropriate (Sonnet for fixes, Opus for complex changes)  
+**Model:** Context-appropriate (Sonnet for fixes, Opus for complex changes)
 **Goal:** Iterate until quality threshold met
 
 ### 6.1 Satisfaction Check
@@ -510,7 +510,7 @@ Ask these questions:
 
 ## Phase 7: CLEANUP & COMMIT (30 min)
 
-**Model:** Haiku or Sonnet (cleanup work)  
+**Model:** Haiku or Sonnet (cleanup work)
 **Goal:** Production-ready state
 
 ### 7.0 CRITICAL: Safe Database Cleanup
@@ -670,7 +670,7 @@ Track these across iterations to measure improvement:
 
 ## 🔗 Integration with Playbooks
 
-**This document (WORK_CYCLE.md) = PROCESS**  
+**This document (WORK_CYCLE.md) = PROCESS**
 **Playbooks = TECHNICAL GUIDELINES**
 
 **Use them together:**
@@ -711,6 +711,6 @@ Refactoring existing code?
 
 ---
 
-**Last Updated:** 2026-02-20  
-**Owner:** Surapat Ek-In (Arm)  
+**Last Updated:** 2026-02-20
+**Owner:** Surapat Ek-In (Arm)
 **Next Review:** After using this cycle on 3 different projects

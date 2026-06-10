@@ -1,6 +1,6 @@
 # Phase 5: Build (With Auto-Quality)
 
-**Previous:** Phase 5 was "just code"  
+**Previous:** Phase 5 was "just code"
 **Now:** Phase 5 is "code + auto-improve + secure + tested"
 
 ---
