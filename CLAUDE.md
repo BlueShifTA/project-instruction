@@ -35,8 +35,13 @@ FastAPI serves `openapi.json` → frontend downloads it → Orval generates type
 
 ### Template lifecycle
 
-- `just bootstrap` — rename placeholders; prefer explicit args in automation: `just bootstrap --project-name "My App" --project-slug my-app --python-package my_app --non-interactive`
-- After first successful build: `just template-clean`, replace the demo surface (`POST /api/example/echo`, `GET /health`, `GET /ready`, demo homepage sections), update `CLAUDE.md` + `README.md` to describe the real project.
+When this template is copied into a new project, de-templating is mandatory — not optional polish:
+
+1. `just setup` — one-shot scaffold: renames placeholders, installs everything, prints the de-templating checklist. (Pieces: `just bootstrap --project-name "My App" --project-slug my-app --python-package my_app --non-interactive` for automation.)
+2. After first successful build: change, adjust, or delete **everything still template-related** — demo surface (`POST /api/example/echo`, demo homepage sections), example tests, `instruction/profiles/surapat/`, template wording in docs.
+3. `just template-check` — deterministic remnant scan (brand strings + demo surface, file:line). Re-run until it exits 0.
+4. Update `README.md` to describe the real project.
+5. **Finally, rewrite this `CLAUDE.md`** so it describes the new project — its layout, domain vocabulary, and commands. A CLAUDE.md that still describes the template is doc drift.
 
 ## Documentation
 
@@ -130,7 +135,6 @@ Full rules: [instruction/reference/REFACTOR_AND_TESTING.md](instruction/referenc
 - Commit a backend API change without regenerating frontend types.
 - Claim a UI change works without browsing it.
 - Ship code that contradicts existing docs (`README.md`, `docs/`, `instruction/`) without updating them in the same commit.
-- Leave commits untagged — `just tag patch|minor|major` immediately after every commit.
 - Declare a task finished without the user's confirmation — present verified results and wait for sign-off.
 - Skip the drift check — always cross-check code against docs (`CLAUDE.md`, `README.md`, `docs/`, `instruction/`) and surface mismatches.
 
@@ -150,7 +154,7 @@ Pre-commit handles formatting, ruff, mypy, pyright, prettier, eslint, tsc, and t
 
 Pre-commit installed by `just install`; whole-repo run: `just lint`. Config: [devops/.pre-commit-config.yaml](devops/.pre-commit-config.yaml). Enforced — on failure, fix and make a new commit (`--amend` after a failed hook is wrong: the commit never happened).
 
-Commit messages: imperative mood, lead with root cause, one concern per commit.
+Commit messages: imperative mood, lead with root cause, one concern per commit. Never add `Co-Authored-By` trailers or AI-attribution footers ("Generated with…") — the message describes the change, not the tooling.
 
 ```
 <action> <what> [<detail>]
@@ -160,7 +164,7 @@ Commit messages: imperative mood, lead with root cause, one concern per commit.
 - <impact/testing notes>
 ```
 
-Semantic versioning; tag after every commit with `just tag patch|minor|major` (PATCH fixes/small features, MINOR new modules/API additions, MAJOR breaking changes).
+Semantic versioning; tag releases with `just tag patch|minor|major` (PATCH fixes/small features, MINOR new modules/API additions, MAJOR breaking changes). Tag when shipping, not per commit.
 
 ## Agents & Skills
 

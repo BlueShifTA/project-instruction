@@ -8,7 +8,7 @@ Prerequisites
 
 Before you begin, install:
 
-* **Python 3.13+**
+* **Python 3.14+**
 * **uv** (Python package manager)
 * **Node.js 20+**
 * **just** (recommended command runner)
@@ -66,24 +66,24 @@ This downloads the OpenAPI schema into ``projects/frontend/openapi.json`` and re
 Template Bootstrap Flow
 -----------------------
 
-Use bootstrap to rename placeholders and the backend ``package`` module::
+One-shot scaffold (rename + install + de-templating checklist)::
 
-   just bootstrap
+   just setup
 
-For automation/non-interactive use, call the script directly with explicit args::
+For automation/non-interactive use, pass explicit args (forwarded to bootstrap)::
 
-   just bootstrap --project-name "My App" --project-slug my-app --python-package my_app --non-interactive
+   just setup --project-name "My App" --project-slug my-app --python-package my_app --non-interactive
+
+``just bootstrap`` runs the rename step alone.
 
 Post-First-Build Cleanup (Required)
 -----------------------------------
 
 After your first successful build and smoke test:
 
-1. Run::
-
-      just template-clean
-
-2. Remove/replace template examples (routes, components, tests, docs)
+1. Remove/replace template examples (routes, components, tests, docs)
+2. Run ``just template-check`` until it reports no remnants (it lists every
+   leftover brand string and demo file with file:line)
 3. Update ``CLAUDE.md`` and ``README.md`` to describe your real project
 
 Project Structure (High Level)

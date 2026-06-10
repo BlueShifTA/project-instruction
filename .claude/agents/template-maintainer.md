@@ -20,7 +20,7 @@ Agent for maintaining the project-instruction repository (merged template + inst
 ## Tools to prefer
 
 Always call existing tools instead of re-typing commands:
-- Use `just` recipes: `install`, `lint`, `test`, `typecheck`, `run-ci`, `bootstrap`, `template-clean`.
+- Use `just` recipes: `install`, `lint`, `test`, `typecheck`, `run-ci`, `setup`, `bootstrap`, `template-check`.
 - Use the Grep/Glob tools, not Bash `grep`/`find`.
 - Invoke project skills when applicable: `/verify`, `/format-code`, `/ci`.
 
@@ -44,6 +44,6 @@ This repo combines two concerns:
 
 ## Template Lifecycle
 
-- Customize with `just bootstrap` (renames placeholders)
-- After first successful build: `just template-clean` (removes example code)
+- Customize with `just setup` (bootstrap rename + install + checklist)
+- After first successful build: replace the demo surface, then `just template-check` until it exits 0
 - Update `CLAUDE.md` and `README.md` to describe the real project

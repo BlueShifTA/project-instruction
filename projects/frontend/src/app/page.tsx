@@ -10,8 +10,8 @@ export default function Home() {
       description="This starter keeps App Router and Tailwind, then adds a mono-inspired MUI theme layer, shared UI modules, and placeholder-first demo components."
       actions={
         <>
-          <a className="template-link-pill" href="/docs">
-            View Docs
+          <a className="template-link-pill" href="http://127.0.0.1:8000/docs">
+            API Docs
           </a>
           <code className="template-code-pill">just run-frontend</code>
           <code className="template-code-pill">just generate-frontend-types</code>

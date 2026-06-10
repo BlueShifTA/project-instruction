@@ -27,7 +27,7 @@ project-instruction/
 
 ## Prerequisites
 
-- Python 3.13+
+- Python 3.14+
 - [uv](https://github.com/astral-sh/uv)
 - [just](https://github.com/casey/just)
 - Node.js 20+
@@ -56,8 +56,9 @@ All automation via `just` — run `just --list` for the full set.
 | `just typecheck` | mypy + pyright + tsc |
 | `just run-ci` | Mirror GitHub Actions CI locally (coverage gate 80%) |
 | `just generate-frontend-types` | Regenerate Orval API client |
-| `just bootstrap` | Rename template placeholders |
-| `just template-clean` | Mark cleanup after first build |
+| `just setup` | One-shot scaffold: bootstrap + install + checklist |
+| `just bootstrap` | Rename template placeholders only |
+| `just template-check` | List remaining template remnants (exit 0 = clean) |
 | `just tag patch\|minor\|major` | Tag a release |
 
 Before every commit: `just lint && just typecheck && just test` — never `--no-verify`.
@@ -76,8 +77,8 @@ Regenerate after backend API changes: `just run-backend`, then `just generate-fr
 - Frontend: health widget, setup form on home page
 
 After first successful build:
-1. Run `just template-clean`
-2. Replace template endpoints/components
+1. Replace template endpoints/components
+2. Run `just template-check` until it reports no remnants
 3. Update `CLAUDE.md` and `README.md` for your project
 
 ## Documentation

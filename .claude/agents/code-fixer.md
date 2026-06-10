@@ -30,7 +30,7 @@ You fix a single assigned workstream of issues. You edit **only the files listed
 3. Match existing code style exactly (indentation, naming, import order)
 4. Do not refactor beyond the issue — surgical changes only
 5. Do not add comments unless the fix introduces non-obvious behavior
-6. Do not touch test files unless the issue is specifically a broken test
+6. Tests are part of your workstream: fix behavior with TDD (failing test first when the fix changes behavior), add a regression test for every bug you fix, and update tests your fix invalidates. Do not weaken or delete assertions to make a fix pass.
 
 ## Tools to prefer
 

@@ -21,7 +21,7 @@ Target path: `$ARGUMENTS` (defaults to project root)
 
 | Phase | Agent | Runtime |
 |-------|-------|---------|
-| 1 — Audit | Claude `read-only` sub-agent | Sonnet 4.6, xhigh effort |
+| 1 — Audit | Claude `Explore` sub-agent (read-only) | Sonnet 4.6, xhigh effort |
 | 2 — Plan | Orchestrator (inline) | — |
 | 3 — Fix | `.claude/agents/code-fixer.md` | Sonnet, one per workstream |
 | 4 — Verify | Bash (`just` commands) | — |
@@ -30,7 +30,7 @@ Target path: `$ARGUMENTS` (defaults to project root)
 
 ## Phase 1: Audit (Critic Review)
 
-Spawn a **critic agent** (`subagent_type: read-only`, `model: sonnet`) — claude-sonnet-4-6, xhigh effort — to review the target path exhaustively:
+Spawn a **critic agent** (`subagent_type: Explore` — read-only by design, `model: sonnet`) — claude-sonnet-4-6, xhigh effort — to review the target path exhaustively:
 
 - Read every file in the target path; do not skip or summarise — full coverage required
 - Scan for bugs, code smells, type errors, security issues, dead code, SOLID violations, TypedDict misuse, banned import patterns

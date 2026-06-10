@@ -26,7 +26,7 @@ Parse arguments:
 
 ### For `code`, `architecture`, or `security` types:
 
-1. Spawn a **critic agent** (`subagent_type: read-only`) with the appropriate persona.
+1. Spawn a **critic agent** (`subagent_type: Explore` — read-only by design) with the appropriate persona.
 
 2. The agent must review the target path and produce output in this exact format:
 
