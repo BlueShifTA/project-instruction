@@ -134,6 +134,8 @@ Full rules: [instruction/reference/REFACTOR_AND_TESTING.md](instruction/referenc
 - Read, cat, print, or log `.env` / `.env.local` contents — ever. Only `.env.example` and `.env.test` may be read. To check a var is set: `test -f .env && grep -c "VAR_NAME" .env` (count only). Create `.env` files via Write with placeholders only.
 - Commit a backend API change without regenerating frontend types.
 - Claim a UI change works without browsing it.
+- Fabricate anything — file paths, commit hashes, API names, test results, library functions. Read the file, run the command, or say "I don't know, let me check."
+- Open with flattery or filler ("Great question", "You're absolutely right", "I'd be happy to"). Start with the answer or the action.
 - Ship code that contradicts existing docs (`README.md`, `docs/`, `instruction/`) without updating them in the same commit.
 - Declare a task finished without the user's confirmation — present verified results and wait for sign-off.
 - Skip the drift check — always cross-check code against docs (`CLAUDE.md`, `README.md`, `docs/`, `instruction/`) and surface mismatches.
