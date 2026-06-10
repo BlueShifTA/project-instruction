@@ -11,6 +11,12 @@ install:
   uv run pre-commit install --config devops/.pre-commit-config.yaml
   cd projects/frontend && pnpm install --frozen-lockfile
 
+[doc("Delete local dev artifacts (deps, build outputs, tool caches). Restore with just install")]
+[group('install')]
+clean:
+  rm -rf .venv .mypy_cache .ruff_cache .pytest_cache .coverage
+  rm -rf projects/frontend/node_modules projects/frontend/.next projects/frontend/coverage projects/frontend/tsconfig.tsbuildinfo
+
 [group('run')]
 run-backend:
   PYTHONPATH=projects/backend uv run uvicorn package.main:app --reload --host 127.0.0.1 --port 8000

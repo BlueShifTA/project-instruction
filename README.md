@@ -60,6 +60,7 @@ All automation via `just` — run `just --list` for the full set.
 | `just bootstrap` | Rename template placeholders only |
 | `just template-check` | List remaining template remnants (exit 0 = clean) |
 | `just create-version [X.Y.Z]` | Tag + push a release (empty = auto patch bump) |
+| `just clean` | Delete deps, build outputs, tool caches (restore: `just install`) |
 
 Before every commit: `just lint && just typecheck && just test` — never `--no-verify`.
 

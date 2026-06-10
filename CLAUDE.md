@@ -14,7 +14,7 @@ Before anything on a dev laptop: verify RTK is active (`rtk --version && rtk gai
 
 ## Build / Run / Dev
 
-All commands via `just` — `just --list`. Install: `just install`.
+All commands via `just` — `just --list`. Install: `just install`. Delete deps/build/tool caches: `just clean` (restore with `just install`).
 
 | Task | Command |
 | ---- | ------- |
