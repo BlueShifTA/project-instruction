@@ -9,7 +9,7 @@ Backend Stack
 Runtime and App Framework
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* **Python 3.13+**
+* **Python 3.14+**
 * **FastAPI** for the backend API
 * **pydantic-settings** for application settings/config
 * **uvicorn** for local ASGI serving

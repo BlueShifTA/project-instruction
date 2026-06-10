@@ -39,9 +39,9 @@ All imports must be at the top of the file. Never import inside functions, metho
 
 `from foo import *` is banned. Every import must name its symbols explicitly. Wildcard imports hide the source of names, break `grep`-based navigation, and cause spurious shadowing when the upstream module adds new exports.
 
-## No `from __future__ import annotations` in Python 3.13+
+## No `from __future__ import annotations` in Python 3.14+
 
-Python 3.13 is the project baseline. Annotations already work for modern syntax (`list[str] | None`, `X | None`) without the future import. Remove `from __future__ import annotations` when you see it. For the rare self-referential TypedDict / dataclass case, use an inline string forward ref (`content: "list[ADFNode] | None"`) instead of re-enabling PEP 563 globally.
+Python 3.14 is the project baseline. Annotations already work for modern syntax (`list[str] | None`, `X | None`) without the future import. Remove `from __future__ import annotations` when you see it. For the rare self-referential TypedDict / dataclass case, use an inline string forward ref (`content: "list[ADFNode] | None"`) instead of re-enabling PEP 563 globally.
 
 ## No `if TYPE_CHECKING:` blocks
 
@@ -185,7 +185,7 @@ node = cast(ADFNode, {"type": "text", "text": "hi"})   # BANNED
 # CORRECT — cast immediately after response.json(), bare type
 body = cast(JiraIssueResponse, response.json())
 
-# WRONG — string forward ref (Python 3.13 resolves the type at runtime)
+# WRONG — string forward ref (Python 3.14 resolves the type at runtime)
 body = cast("JiraIssueResponse", response.json())
 
 # WRONG — let Any propagate; callers can't narrow
@@ -193,7 +193,7 @@ def fetch() -> Any:
     return response.json()
 ```
 
-**No `from __future__ import annotations` in Python 3.13+.** Remove it when you see it. For self-referential TypedDicts, use an inline string forward ref: `content: "list[ADFNode] | None"` inside the class body.
+**No `from __future__ import annotations` in Python 3.14+.** Remove it when you see it. For self-referential TypedDicts, use an inline string forward ref: `content: "list[ADFNode] | None"` inside the class body.
 
 **No `if TYPE_CHECKING:` import blocks.** A `TYPE_CHECKING` guard is a smell that the module graph has a cycle the architecture isn't admitting. Move the shared TypedDict / dataclass into a leaf module both sides import, and keep all imports unconditional at the top of the file. See the import rules section above for the full rationale.
 
