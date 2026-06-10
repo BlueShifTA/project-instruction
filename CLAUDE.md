@@ -42,7 +42,7 @@ When this template is copied into a new project, de-templating is mandatory — 
 3. `just template-check` — deterministic remnant scan (brand strings + demo surface, file:line). Re-run until it exits 0.
 4. Update `README.md` to describe the real project.
 5. **Rewrite this `CLAUDE.md`** so it describes the new project — its layout, domain vocabulary, and commands. A CLAUDE.md that still describes the template is doc drift.
-6. **Finally, `just template-reset-history`** — wipes template git history into a single clean initial commit (destructive, asks for confirmation). Then point `origin` at the new project repo and force-push. The new project's history starts at zero — no template commits.
+6. **Finally, `just template-reset-history`** — wipes template git history into a single clean initial commit (destructive, asks for confirmation). Immediately after it runs, delete the `template-reset-history` recipe from the `justfile` (and its mentions in README and the bootstrap checklist), then `git add -A && git commit --amend --no-edit` — the new repo must not ship a history-wiping command. Then point `origin` at the new project repo and force-push. The new project's history starts at zero — no template commits.
 
 ## Documentation
 
