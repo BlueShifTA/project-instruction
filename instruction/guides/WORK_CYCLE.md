@@ -144,12 +144,15 @@ def handle(processor: ProcessorProtocol) -> None: ...
 
 **Import rules (non-negotiable):**
 ```python
-# Same directory → relative imports
+# Same directory → relative imports (the only from-import allowed)
 from .example import router          # ✅ CORRECT
 from package.api.example import router  # ❌ WRONG (same dir, use relative)
 
-# Different directory → absolute imports
-from package.domain.models import MyModel  # ✅ CORRECT
+# Different directory / third-party → module import with alias, never from-import
+import package.domain.models as pdm  # ✅ CORRECT — use pdm.MyModel
+import fastapi                       # ✅ CORRECT — use fastapi.APIRouter
+from package.domain.models import MyModel  # ❌ WRONG (import the module, alias it)
+from fastapi import APIRouter              # ❌ WRONG (import fastapi)
 from ..domain.models import MyModel        # ❌ WRONG (never parent-relative)
 ```
 

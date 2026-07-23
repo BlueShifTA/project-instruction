@@ -225,7 +225,7 @@ except:
 - [ ] Same-directory imports use relative paths (`from .x`), cross-module use absolute — never parent-relative (`from ..`)
 - [ ] No unused imports
 - [ ] Grouped: stdlib, third-party, local
-- [ ] Absolute imports for cross-package, relative imports within same package
+- [ ] Module imports with alias for cross-package and third-party (`import a.b as ab`, never `from a.b import c`); relative imports within same directory
 - [ ] No circular dependencies
 - [ ] No module-level global instances (`foo = Foo()` at top level) — use singleton or instantiate in classes/functions
 

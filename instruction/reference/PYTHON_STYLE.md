@@ -15,20 +15,28 @@ _PrivateClass       # Internal implementation classes
 snake_case.py       # Module names
 ```
 
-## Import rules: relative within same directory, absolute across modules
+## Import rules: module imports with an alias, relative within same directory
 
-Files in the **same directory** must use relative imports (`from .`).
-Files importing from a **different directory** (parent or sibling module) must use absolute imports.
+Import the **module**, never its members. Always `import main_module.sub_module as mms`; never `from main_module.sub_module import sub_sub_module` (and never `from module import symbol`). Applies to **all** imports — own packages and third-party libraries alike. Access everything through the module alias/namespace.
+
+The single exception: files in the **same directory** keep relative imports (`from .`).
 Never use parent-relative imports (`from ..`).
 
 ```python
-# Same directory: use relative imports
-from .example import router          # CORRECT
-from package.api.example import router  # WRONG — same directory, use relative
+# Different directory / third-party: module import, access via namespace
+import fastapi
+import package.domain.models as pdm       # CORRECT — module aliased
 
-# Different directory: use absolute imports
-from package.domain.models import MyModel  # CORRECT
+router = fastapi.APIRouter()
+model = pdm.MyModel()
+
+# WRONG — member imports
+from fastapi import APIRouter              # WRONG — import fastapi, use fastapi.APIRouter
+from package.domain.models import MyModel  # WRONG — import the module, alias it
 from ..domain.models import MyModel        # WRONG — never use parent-relative (..)
+
+# Same directory: relative imports stay (the only from-import allowed)
+from .example import router                # CORRECT — same-directory exception
 ```
 
 ## No lazy imports
@@ -140,14 +148,14 @@ For JSON-shaped data that must remain a `dict` (API responses, request payloads,
 
 ```python
 # CORRECT — named shape, all fields key-required, nullable via X | None
-from typing import TypedDict
+import typing as tp
 
-class JiraIssueFields(TypedDict):
+class JiraIssueFields(tp.TypedDict):
     summary: str | None
     assignee: JiraUser | None
     priority: JiraPriority | None
 
-class JiraIssueResponse(TypedDict):
+class JiraIssueResponse(tp.TypedDict):
     key: str
     id: str
     fields: JiraIssueFields
@@ -183,7 +191,7 @@ node = cast(ADFNode, {"type": "text", "text": "hi"})   # BANNED
 
 ```python
 # CORRECT — cast immediately after response.json(), bare type
-body = cast(JiraIssueResponse, response.json())
+body = tp.cast(JiraIssueResponse, response.json())
 
 # WRONG — string forward ref (Python 3.14 resolves the type at runtime)
 body = cast("JiraIssueResponse", response.json())

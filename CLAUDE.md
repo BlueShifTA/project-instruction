@@ -82,7 +82,7 @@ Every change: **Red → Green → Refactor**. Never write implementation before 
 Full rules: [instruction/reference/PYTHON_STYLE.md](instruction/reference/PYTHON_STYLE.md). Enforced summary:
 
 - `snake_case` functions/vars, `PascalCase` classes, `CONSTANT_CASE` module constants, `_private` prefix for internal.
-- All imports at module top. No lazy/wildcard imports, no `from __future__ import annotations`, no `if TYPE_CHECKING:` blocks (all three hook-enforced). Relative imports within a directory, absolute across modules, no `from ..`.
+- All imports at module top. No lazy/wildcard imports, no `from __future__ import annotations`, no `if TYPE_CHECKING:` blocks (all three hook-enforced). Module imports with an alias across directories and for all third-party libs (`import package.domain.models as pdm`, `import fastapi`) — never `from X import Y`; the only exception is relative imports within the same directory (`from .example import router`); no `from ..`.
 - Type-annotate every `__init__` parameter and attribute; return `-> None`. No `Any` unless justified.
 - `@dataclass` for data structures; `TypedDict` for JSON shapes (all keys required, `X | None` for nullable — no `NotRequired`, no `total=False`, no `dict[str, object]`/`dict[str, Any]`).
 - `typing.Protocol` for interfaces, not ABCs. No module-level mutable service instances (module constants and `app = create_app()` are fine).
