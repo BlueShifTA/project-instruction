@@ -36,18 +36,19 @@ Every CLI entry point funnels through one shared `run_cli(fn, handlers)` helper 
 
 ```python
 # src/_cli_errors.py — shared, imported by every CLI
-from collections.abc import Callable
-from dataclasses import dataclass
+import collections.abc as cabc
+import dataclasses
+
 import click
 
-@dataclass(frozen=True)
+@dataclasses.dataclass(frozen=True)
 class CliErrorHandler:
     exc_type: type[BaseException]
     exit_code: int
     hint: str | None
-    message_fn: Callable[[BaseException], str] | None = None
+    message_fn: cabc.Callable[[BaseException], str] | None = None
 
-def run_cli(fn: Callable[[], int], handlers: list[CliErrorHandler]) -> int:
+def run_cli(fn: cabc.Callable[[], int], handlers: list[CliErrorHandler]) -> int:
     try:
         return fn()
     except BaseException as exc:
@@ -64,9 +65,11 @@ def run_cli(fn: Callable[[], int], handlers: list[CliErrorHandler]) -> int:
 ```python
 # src/fetch_ticket.py — a CLI that uses the shared helper
 import sys
+
 import click
 import httpx
-from _cli_errors import CliErrorHandler, run_cli
+
+from ._cli_errors import CliErrorHandler, run_cli   # same directory, private module
 
 _HANDLERS: list[CliErrorHandler] = [
     CliErrorHandler(exc_type=LookupError, exit_code=2, hint=None),

@@ -14,12 +14,12 @@ Allowed exception (current repo default):
 """
 
 import ast
-from dataclasses import dataclass
-from pathlib import Path
+import dataclasses
+import pathlib
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = pathlib.Path(__file__).resolve().parents[1]
 SCAN_ROOTS = ("projects", "devops", "docs")
-ALLOWLIST = {Path("docs/conf.py")}
+ALLOWLIST = {pathlib.Path("docs/conf.py")}
 DISALLOWED_METHODS = {"insert", "append", "extend"}
 SKIP_DIRS = {
     ".git",
@@ -36,9 +36,9 @@ SKIP_DIRS = {
 }
 
 
-@dataclass(frozen=True)
+@dataclasses.dataclass(frozen=True)
 class Violation:
-    path: Path
+    path: pathlib.Path
     line: int
     col: int
     method: str
@@ -52,8 +52,8 @@ class Violation:
         )
 
 
-def iter_python_files() -> list[Path]:
-    files: list[Path] = []
+def iter_python_files() -> list[pathlib.Path]:
+    files: list[pathlib.Path] = []
     for root_name in SCAN_ROOTS:
         root = ROOT / root_name
         if not root.exists():
@@ -109,7 +109,7 @@ def _attr_chain_matches_sys_path_call(
     return func.attr
 
 
-def check_file(path: Path) -> tuple[list[Violation], str | None]:
+def check_file(path: pathlib.Path) -> tuple[list[Violation], str | None]:
     rel = path.relative_to(ROOT)
     try:
         text = path.read_text(encoding="utf-8")

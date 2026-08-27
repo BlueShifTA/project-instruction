@@ -1,10 +1,10 @@
-from pydantic import BaseModel, Field
+import pydantic
 
 
-class ExampleEchoRequest(BaseModel):
-    message: str = Field(min_length=1, max_length=500)
+class ExampleEchoRequest(pydantic.BaseModel):
+    message: str = pydantic.Field(min_length=1, max_length=500)
 
 
-class ExampleEchoResponse(BaseModel):
+class ExampleEchoResponse(pydantic.BaseModel):
     message: str
     length: int

@@ -2,8 +2,8 @@
 
 from collections.abc import AsyncGenerator
 
+import httpx2
 import pytest
-from httpx import ASGITransport, AsyncClient
 
 from package.main import app
 
@@ -13,15 +13,15 @@ from package.main import app
 
 
 @pytest.fixture
-async def client() -> AsyncGenerator[AsyncClient]:
+async def client() -> AsyncGenerator[httpx2.AsyncClient]:
     """Provide an AsyncClient for testing the FastAPI app."""
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+    transport = httpx2.ASGITransport(app=app)
+    async with httpx2.AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
 
 
 @pytest.fixture
-async def client_with_auth(client: AsyncClient) -> AsyncClient:
+async def client_with_auth(client: httpx2.AsyncClient) -> httpx2.AsyncClient:
     """Provide a client with mock authentication headers."""
     client.headers.update(
         {

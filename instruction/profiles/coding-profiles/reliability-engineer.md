@@ -333,10 +333,10 @@ Reliability and security are intertwined: thread exhaustion, resource leaks, and
 **Bounded thread pools** — Create one `ThreadPoolExecutor(max_workers=N)` at startup. Never create per-request executors; they exhaust OS thread limits under load.
 
 ```python
-from concurrent.futures import ThreadPoolExecutor
+import concurrent.futures as cf
 
 # At app startup — one shared pool
-executor = ThreadPoolExecutor(max_workers=settings.worker_threads)
+executor = cf.ThreadPoolExecutor(max_workers=settings.worker_threads)
 
 # In async handlers
 result = await loop.run_in_executor(executor, blocking_hardware_call, args)

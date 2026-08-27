@@ -9,10 +9,10 @@ Tests cover:
 - General security hygiene (no server version leak, clean 404s, content-type handling)
 """
 
-from fastapi.testclient import TestClient
+import fastapi.testclient as ftc
 
-from package.core.config import get_settings
-from package.main import app
+import package.core.config as pcc
+import package.main as pm
 
 # ──────────────────────────────────────────────────────────────
 # Request ID Middleware
@@ -21,7 +21,7 @@ from package.main import app
 
 def test_request_id_header_present() -> None:
     """Every response must include an X-Request-ID header."""
-    client = TestClient(app)
+    client = ftc.TestClient(pm.app)
     response = client.get("/health")
     assert response.status_code == 200
     assert "x-request-id" in response.headers, (
@@ -31,7 +31,7 @@ def test_request_id_header_present() -> None:
 
 def test_request_id_is_unique_per_request() -> None:
     """Each request should receive a distinct X-Request-ID value."""
-    client = TestClient(app)
+    client = ftc.TestClient(pm.app)
     ids: set[str] = set()
     for _ in range(5):
         response = client.get("/health")
@@ -48,7 +48,7 @@ def test_request_id_client_supplied_id_is_honoured() -> None:
     client-supplied value, the assertion will fail and the docstring must be
     updated to reflect that design decision.
     """
-    client = TestClient(app)
+    client = ftc.TestClient(pm.app)
     supplied_id = "trace-abc-123"
     response = client.get("/health", headers={"X-Request-ID": supplied_id})
     returned_id = response.headers.get("x-request-id", "")
@@ -67,7 +67,7 @@ _ONE_MB = 1024 * 1024  # bytes
 
 def test_normal_sized_request_succeeds() -> None:
     """A request body well below the 1 MB limit must be accepted."""
-    client = TestClient(app)
+    client = ftc.TestClient(pm.app)
     response = client.post(
         "/api/example/echo",
         json={"message": "hello"},
@@ -77,7 +77,7 @@ def test_normal_sized_request_succeeds() -> None:
 
 def test_oversized_request_returns_413() -> None:
     """A request body exceeding 1 MB must be rejected with HTTP 413."""
-    client = TestClient(app, raise_server_exceptions=False)
+    client = ftc.TestClient(pm.app, raise_server_exceptions=False)
     oversized_body = b"x" * (_ONE_MB + 1)
     response = client.post(
         "/api/example/echo",
@@ -98,7 +98,7 @@ def test_oversized_request_response_carries_request_id() -> None:
     correlation. add_middleware() prepends — RequestIDMiddleware must be
     registered LAST in create_app().
     """
-    client = TestClient(app, raise_server_exceptions=False)
+    client = ftc.TestClient(pm.app, raise_server_exceptions=False)
     response = client.post(
         "/api/example/echo",
         content=b"x" * (_ONE_MB + 1),
@@ -112,7 +112,7 @@ def test_oversized_request_response_carries_request_id() -> None:
 
 def test_request_at_exact_size_limit_succeeds() -> None:
     """A request body at exactly 1 MB must be accepted (boundary is exclusive)."""
-    client = TestClient(app, raise_server_exceptions=False)
+    client = ftc.TestClient(pm.app, raise_server_exceptions=False)
     exact_body = b"x" * _ONE_MB
     response = client.post(
         "/api/example/echo",
@@ -127,7 +127,7 @@ def test_request_at_exact_size_limit_succeeds() -> None:
 
 def test_empty_body_succeeds() -> None:
     """An empty request body must not trigger the size limiter."""
-    client = TestClient(app)
+    client = ftc.TestClient(pm.app)
     response = client.get("/health")
     assert response.status_code == 200
 
@@ -139,7 +139,7 @@ def test_empty_body_succeeds() -> None:
 
 def test_cors_allowed_origin_receives_headers() -> None:
     """An origin in cors_origins must receive Access-Control-Allow-Origin."""
-    client = TestClient(app)
+    client = ftc.TestClient(pm.app)
     response = client.get(
         "/health",
         headers={"Origin": "http://localhost:3000"},
@@ -153,7 +153,7 @@ def test_cors_allowed_origin_receives_headers() -> None:
 
 def test_cors_disallowed_origin_does_not_receive_headers() -> None:
     """An unknown origin must NOT receive Access-Control-Allow-Origin."""
-    client = TestClient(app)
+    client = ftc.TestClient(pm.app)
     response = client.get(
         "/health",
         headers={"Origin": "https://evil.example.com"},
@@ -174,7 +174,7 @@ def test_cors_no_wildcard_in_settings() -> None:
     is patched to raise RuntimeError on wildcard, this test also validates
     that the running app was created without triggering that guard.
     """
-    settings = get_settings()
+    settings = pcc.get_settings()
     assert "*" not in settings.cors_origins, (
         "Wildcard '*' found in cors_origins — this is a security misconfiguration."
     )
@@ -182,7 +182,7 @@ def test_cors_no_wildcard_in_settings() -> None:
 
 def test_cors_preflight_allowed_origin() -> None:
     """OPTIONS preflight for an allowed origin must return 200 with CORS headers."""
-    client = TestClient(app)
+    client = ftc.TestClient(pm.app)
     response = client.options(
         "/health",
         headers={
@@ -206,7 +206,7 @@ def test_default_host_is_loopback() -> None:
     public-facing ones. Loopback-only is the safe default; a reverse proxy
     (nginx, Caddy) should handle external traffic.
     """
-    settings = get_settings()
+    settings = pcc.get_settings()
     assert settings.host == "127.0.0.1", (
         f"Default host is '{settings.host}' — must be '127.0.0.1', not '0.0.0.0'."
     )
@@ -219,7 +219,7 @@ def test_default_host_is_loopback() -> None:
 
 def test_no_server_version_header() -> None:
     """The 'Server' header must not reveal framework or version information."""
-    client = TestClient(app)
+    client = ftc.TestClient(pm.app)
     response = client.get("/health")
     server_header = response.headers.get("server", "").lower()
     # Uvicorn / Starlette emit "uvicorn" — reject any version string like "uvicorn/0.x"
@@ -231,7 +231,7 @@ def test_no_server_version_header() -> None:
 
 def test_404_does_not_leak_stack_trace() -> None:
     """Unknown routes must return a plain 404 with no internal detail."""
-    client = TestClient(app, raise_server_exceptions=False)
+    client = ftc.TestClient(pm.app, raise_server_exceptions=False)
     response = client.get("/this-route-does-not-exist")
     assert response.status_code == 404
     body = response.text.lower()
@@ -244,7 +244,7 @@ def test_404_does_not_leak_stack_trace() -> None:
 
 def test_invalid_content_type_returns_422_not_500() -> None:
     """Sending wrong content-type to a JSON endpoint must yield 422, not 500."""
-    client = TestClient(app, raise_server_exceptions=False)
+    client = ftc.TestClient(pm.app, raise_server_exceptions=False)
     response = client.post(
         "/api/example/echo",
         content=b"not-json",

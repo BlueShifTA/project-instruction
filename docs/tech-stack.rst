@@ -96,6 +96,7 @@ CI workflow: ``.github/workflows/ci.yml``
   - ``uv sync --all-groups --all-packages``
   - Ruff lint + format check
   - sys.path mutation guard check
+  - Import-style guard check (module imports only)
   - pytest
   - pytest with coverage + Codecov upload
 

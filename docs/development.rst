@@ -110,6 +110,7 @@ Current local hooks include checks for:
 * Mypy + Pyright (backend)
 * Prettier + ESLint (frontend)
 * sys.path mutation guard script
+* Import-style guard script (module imports only, no ``from X import Y``)
 
 Install hooks::
 

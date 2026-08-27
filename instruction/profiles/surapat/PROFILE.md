@@ -219,10 +219,10 @@ docker build -f devops/backend.dockerfile -t <REPO>:local .
 
 ### Example 1: Hardware Retry Pattern
 ```python
-from <DEVICES_PACKAGE>.camera import with_camera_retry
+import <DEVICES_PACKAGE>.camera as dcam
 
 class MyCamera(CameraBase):
-    @with_camera_retry
+    @dcam.with_camera_retry
     async def custom_capture(self, exposure: float) -> CameraImage:
         """Capture with automatic retry on failure."""
         return await self._hardware_capture(exposure)

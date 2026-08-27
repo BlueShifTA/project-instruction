@@ -17,20 +17,27 @@ snake_case.py       # Module names
 
 ## Import rules: module imports with an alias, relative within same directory
 
-Import the **module**, never its members. Always `import main_module.sub_module as mms`; never `from main_module.sub_module import sub_sub_module` (and never `from module import symbol`). Applies to **all** imports — own packages and third-party libraries alike. Access everything through the module alias/namespace.
+**Enforced** by `devops/check_import_style.py` (pre-commit hook `module-imports-only`), which scans `projects/`, `devops/`, and `docs/`.
+
+Import the **module**, never its members. Always `import main_module.sub_module as mms`; never `from main_module.sub_module import sub_sub_module` (and never `from module import symbol`). Applies to **all** imports — standard library, third-party libraries, and own packages alike. Access everything through the module alias/namespace. Dotted paths get a short alias; a single top-level name (`fastapi`, `asyncio`) needs none. Universal community aliases (`import pandas as pd`, `import numpy as np`) are the expected form for those libraries.
 
 The single exception: files in the **same directory** keep relative imports (`from .`).
 Never use parent-relative imports (`from ..`).
 
 ```python
-# Different directory / third-party: module import, access via namespace
+# Standard library / third-party / different directory: module import, access via namespace
+import asyncio
+import collections.abc as cabc
 import fastapi
+import fastapi.responses as fr
+import pandas as pd
 import package.domain.models as pdm       # CORRECT — module aliased
 
 router = fastapi.APIRouter()
 model = pdm.MyModel()
 
 # WRONG — member imports
+from typing import Annotated               # WRONG — import typing, use typing.Annotated
 from fastapi import APIRouter              # WRONG — import fastapi, use fastapi.APIRouter
 from package.domain.models import MyModel  # WRONG — import the module, alias it
 from ..domain.models import MyModel        # WRONG — never use parent-relative (..)
@@ -38,6 +45,23 @@ from ..domain.models import MyModel        # WRONG — never use parent-relative
 # Same directory: relative imports stay (the only from-import allowed)
 from .example import router                # CORRECT — same-directory exception
 ```
+
+### Same-directory class imports come from a private module
+
+When a same-directory import pulls in a **class**, the module holding it is named with a leading underscore and the class is re-exported by the package. The class is the public surface; the file that happens to contain it is an implementation detail nobody should import by name.
+
+```python
+# domain/_models.py
+class ExampleEchoRequest(pydantic.BaseModel): ...
+
+# domain/__init__.py
+from ._models import ExampleEchoRequest    # CORRECT — private module, public class
+
+# domain/__init__.py — WRONG
+from .models import ExampleEchoRequest     # exposes the file, not just the class
+```
+
+Modules that export functions, constants, or pre-built objects (a `router`, an `app`) are not class modules and keep their plain names: `from .main import app, create_app` is fine.
 
 ## No lazy imports
 

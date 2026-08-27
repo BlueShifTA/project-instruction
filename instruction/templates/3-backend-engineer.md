@@ -141,22 +141,23 @@ Before shipping ANY backend code:
 
 ```python
 # ✅ GOOD: Type-safe, clear error handling, logging
-from fastapi import HTTPException, status
-from pydantic import BaseModel
 import logging
+
+import fastapi
+import pydantic
 
 logger = logging.getLogger(__name__)
 
-class UserCreate(BaseModel):
+class UserCreate(pydantic.BaseModel):
     email: str
     name: str
 
-class UserResponse(BaseModel):
+class UserResponse(pydantic.BaseModel):
     id: int
     email: str
     name: str
 
-@router.post("/users", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/users", response_model=UserResponse, status_code=fastapi.status.HTTP_201_CREATED)
 async def create_user(user_data: UserCreate) -> UserResponse:
     """Create a new user. Raises HTTPException if email already exists."""
     logger.info(f"Creating user with email={user_data.email}")
@@ -165,8 +166,8 @@ async def create_user(user_data: UserCreate) -> UserResponse:
     existing = await db.users.find_one({"email": user_data.email})
     if existing:
         logger.warning(f"Duplicate email attempt: {user_data.email}")
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
+        raise fastapi.HTTPException(
+            status_code=fastapi.status.HTTP_409_CONFLICT,
             detail=f"Email {user_data.email} already registered"
         )
 
@@ -186,7 +187,7 @@ async def create_user(user_data: UserCreate) -> UserResponse:
         )
     except Exception as e:
         logger.error(f"Failed to create user: {e}", exc_info=True)
-        raise HTTPException(
+        raise fastapi.HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to create user"
         )
@@ -204,11 +205,13 @@ async def create_user(user_data: UserCreate) -> UserResponse:
 ```python
 # ✅ GOOD: Exponential backoff, timeout, logging
 import asyncio
-from tenacity import retry, stop_after_attempt, wait_exponential
 
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=2, max=10),
+import httpx
+import tenacity
+
+@tenacity.retry(
+    stop=tenacity.stop_after_attempt(3),
+    wait=tenacity.wait_exponential(multiplier=1, min=2, max=10),
     reraise=True
 )
 async def call_external_api(user_id: str) -> dict:
@@ -260,7 +263,7 @@ async def get_user_with_posts(user_id: int) -> dict:
 
     if not rows:
         logger.warning(f"User not found: {user_id}")
-        raise HTTPException(status_code=404, detail="User not found")
+        raise fastapi.HTTPException(status_code=404, detail="User not found")
 
     # Restructure to user + posts
     user = {
@@ -294,8 +297,9 @@ async def get_user_with_posts_BAD(user_id: int) -> dict:
 
 ```python
 # ✅ GOOD: No database, no external API calls
+import unittest.mock as mock
+
 import pytest
-from unittest.mock import AsyncMock, patch
 
 @pytest.mark.asyncio
 async def test_create_user_success():
@@ -303,10 +307,10 @@ async def test_create_user_success():
     user_data = UserCreate(email="test@example.com", name="Test User")
 
     # Mock database insert
-    mock_db = AsyncMock()
-    mock_db.insert_one.return_value = AsyncMock(inserted_id=123)
+    mock_db = mock.AsyncMock()
+    mock_db.insert_one.return_value = mock.AsyncMock(inserted_id=123)
 
-    with patch("app.db.users", mock_db):
+    with mock.patch("app.db.users", mock_db):
         response = await create_user(user_data)
 
     assert response.id == 123
@@ -319,11 +323,11 @@ async def test_create_user_duplicate_email():
     user_data = UserCreate(email="existing@example.com", name="Test")
 
     # Mock database: email already exists
-    mock_db = AsyncMock()
+    mock_db = mock.AsyncMock()
     mock_db.find_one.return_value = {"id": 1, "email": "existing@example.com"}
 
-    with patch("app.db.users", mock_db):
-        with pytest.raises(HTTPException) as exc_info:
+    with mock.patch("app.db.users", mock_db):
+        with pytest.raises(fastapi.HTTPException) as exc_info:
             await create_user(user_data)
 
         assert exc_info.value.status_code == 409
@@ -353,7 +357,7 @@ async def create_resource(data: CreateResourceModel) -> ResourceResponse:
 
 ### Template 2: Retry Pattern
 ```python
-@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=2, max=10))
+@tenacity.retry(stop=tenacity.stop_after_attempt(3), wait=tenacity.wait_exponential(multiplier=1, min=2, max=10))
 async def call_external(url: str) -> dict:
     response = await httpx.get(url, timeout=5.0)
     response.raise_for_status()
@@ -371,7 +375,7 @@ rows = await db.fetch(query, user_id)
 ```python
 @pytest.mark.asyncio
 async def test_endpoint():
-    with patch("app.db") as mock_db:
+    with mock.patch("app.db") as mock_db:
         mock_db.method.return_value = expected_value
         result = await endpoint(data)
         assert result == expected

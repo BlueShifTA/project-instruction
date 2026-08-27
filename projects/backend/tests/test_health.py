@@ -1,17 +1,17 @@
-from fastapi.testclient import TestClient
+import fastapi.testclient as ftc
 
-from package.main import app
+import package.main as pm
 
 
 def test_health() -> None:
-    client = TestClient(app)
+    client = ftc.TestClient(pm.app)
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
 
 
 def test_ready() -> None:
-    client = TestClient(app)
+    client = ftc.TestClient(pm.app)
     response = client.get("/ready")
     assert response.status_code == 200
     assert response.json() == {"status": "ready"}

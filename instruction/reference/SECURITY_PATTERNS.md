@@ -31,11 +31,12 @@ Apply before any external demo or deployment.
 
 ```python
 import uuid
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.requests import Request
 
-class RequestIDMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
+import starlette.middleware.base as smb
+import starlette.requests as sreq
+
+class RequestIDMiddleware(smb.BaseHTTPMiddleware):
+    async def dispatch(self, request: sreq.Request, call_next):
         request_id = str(uuid.uuid4())
         request.state.request_id = request_id
         response = await call_next(request)
@@ -64,18 +65,19 @@ logger.info("Request started", extra={"request_id": request.state.request_id})
 **How:**
 
 ```python
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import Response
+import starlette.middleware.base as smb
+import starlette.requests as sreq
+import starlette.responses as sresp
 
-class RequestSizeLimitMiddleware(BaseHTTPMiddleware):
+class RequestSizeLimitMiddleware(smb.BaseHTTPMiddleware):
     def __init__(self, app, max_bytes: int = 1_048_576) -> None:
         super().__init__(app)
         self.max_bytes: int = max_bytes
 
-    async def dispatch(self, request: Request, call_next):
+    async def dispatch(self, request: sreq.Request, call_next):
         content_length = request.headers.get("content-length")
         if content_length and int(content_length) > self.max_bytes:
-            return Response("Request body too large", status_code=413)
+            return sresp.Response("Request body too large", status_code=413)
         return await call_next(request)
 
 # Register before other middleware:
@@ -95,10 +97,11 @@ app.add_middleware(RequestSizeLimitMiddleware, max_bytes=1_048_576)
 **How:**
 
 ```python
-from fastapi.middleware.cors import CORSMiddleware
+import fastapi
+import fastapi.middleware.cors as fmc
 
-def create_app(settings: Settings) -> FastAPI:
-    app = FastAPI()
+def create_app(settings: Settings) -> fastapi.FastAPI:
+    app = fastapi.FastAPI()
 
     if "*" in settings.cors_origins:
         raise RuntimeError(
@@ -107,7 +110,7 @@ def create_app(settings: Settings) -> FastAPI:
         )
 
     app.add_middleware(
-        CORSMiddleware,
+        fmc.CORSMiddleware,
         allow_origins=settings.cors_origins,
         allow_credentials=True,
         allow_methods=["*"],
@@ -130,9 +133,9 @@ def create_app(settings: Settings) -> FastAPI:
 
 ```python
 # core/config.py
-from pydantic_settings import BaseSettings
+import pydantic_settings
 
-class Settings(BaseSettings):
+class Settings(pydantic_settings.BaseSettings):
     host: str = "127.0.0.1"   # NEVER default to 0.0.0.0
     port: int = 8000
     cors_origins: list[str] = ["http://localhost:3000"]
@@ -153,18 +156,18 @@ class Settings(BaseSettings):
 **How:**
 
 ```python
-from pydantic import BaseModel, Field, model_validator
+import pydantic
 
-class CreateItemRequest(BaseModel):
-    name: str = Field(min_length=1, max_length=200)
-    description: str = Field(default="", max_length=2000)
-    quantity: int = Field(ge=0, le=10000)
-    query: str = Field(min_length=1, max_length=4000)
+class CreateItemRequest(pydantic.BaseModel):
+    name: str = pydantic.Field(min_length=1, max_length=200)
+    description: str = pydantic.Field(default="", max_length=2000)
+    quantity: int = pydantic.Field(ge=0, le=10000)
+    query: str = pydantic.Field(min_length=1, max_length=4000)
 
-class ChatRequest(BaseModel):
-    history: list[dict] = Field(default_factory=list)
+class ChatRequest(pydantic.BaseModel):
+    history: list[dict] = pydantic.Field(default_factory=list)
 
-    @model_validator(mode="after")
+    @pydantic.model_validator(mode="after")
     def cap_history(self) -> "ChatRequest":
         self.history = self.history[-50:]  # Never more than 50 turns
         return self
@@ -184,7 +187,8 @@ class ChatRequest(BaseModel):
 
 ```python
 import re
-from pydantic import field_validator
+
+import pydantic
 
 _INJECTION_PATTERNS = re.compile(
     r"(ignore previous instructions|system prompt|<system>|</system>"
@@ -198,10 +202,10 @@ def sanitize_text(value: str) -> str:
         raise ValueError("Input contains disallowed content.")
     return value
 
-class UserQueryRequest(BaseModel):
+class UserQueryRequest(pydantic.BaseModel):
     query: str
 
-    @field_validator("query", mode="before")
+    @pydantic.field_validator("query", mode="before")
     @classmethod
     def validate_query(cls, v: str) -> str:
         return sanitize_text(v)
@@ -278,19 +282,19 @@ def execute_safe_sql(conn, query: str, params: tuple = ()) -> list:
 **How:**
 
 ```python
-import json
 import hashlib
-from pathlib import Path
+import json
+import pathlib
 
 def cache_key(data: dict) -> str:
     return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
 
-def read_cache(path: Path) -> dict | None:
+def read_cache(path: pathlib.Path) -> dict | None:
     if path.exists():
         return json.loads(path.read_text())
     return None
 
-def write_cache(path: Path, data: dict) -> None:
+def write_cache(path: pathlib.Path, data: dict) -> None:
     path.write_text(json.dumps(data))
 
 # NEVER:
@@ -370,11 +374,11 @@ client = httpx.Client(
 **How:**
 
 ```python
-from functools import lru_cache
-from pathlib import Path
+import functools
+
 import yaml
 
-@lru_cache(maxsize=1)
+@functools.lru_cache(maxsize=1)
 def load_prompts(prompts_path: str) -> dict:
     with open(prompts_path) as f:
         return yaml.safe_load(f)
@@ -449,10 +453,10 @@ Create the following files:
 **How:**
 
 ```python
-from typing import Protocol
+import typing
 
 # PREFERRED — structural typing, no inheritance required
-class LLMBackend(Protocol):
+class LLMBackend(typing.Protocol):
     def generate(self, prompt: str) -> str: ...
     def stream(self, prompt: str): ...
 
@@ -515,14 +519,14 @@ class DataBackend:
 **How:**
 
 ```python
-from concurrent.futures import ThreadPoolExecutor
+import concurrent.futures as cf
 
 # In settings:
-class Settings(BaseSettings):
+class Settings(pydantic_settings.BaseSettings):
     worker_threads: int = 4
 
 # In application startup (not per-request):
-executor = ThreadPoolExecutor(max_workers=settings.worker_threads)
+executor = cf.ThreadPoolExecutor(max_workers=settings.worker_threads)
 
 # Run blocking work in the executor:
 loop = asyncio.get_event_loop()
@@ -553,14 +557,14 @@ async def handler(request):
 **How:**
 
 ```python
-from dataclasses import dataclass, field
+import dataclasses
 
-@dataclass
+@dataclasses.dataclass
 class RequestState:
     """Created fresh per request. Never reused across requests."""
     request_id: str
-    history: list[dict] = field(default_factory=list)
-    results: list[str] = field(default_factory=list)
+    history: list[dict] = dataclasses.field(default_factory=list)
+    results: list[str] = dataclasses.field(default_factory=list)
 
 class Orchestrator:
     """Singleton — stateless. Creates fresh RequestState per call."""
@@ -592,19 +596,20 @@ class Orchestrator:
 
 ```python
 import logging
-from fastapi import HTTPException
-from fastapi.responses import JSONResponse
+
+import fastapi
+import fastapi.responses as fr
 
 logger = logging.getLogger(__name__)
 
 @app.exception_handler(Exception)
-async def generic_exception_handler(request: Request, exc: Exception):
+async def generic_exception_handler(request: fastapi.Request, exc: Exception):
     logger.error(
         "Unhandled exception",
         exc_info=True,
         extra={"request_id": getattr(request.state, "request_id", "unknown")},
     )
-    return JSONResponse(
+    return fr.JSONResponse(
         status_code=500,
         content={"detail": "An internal error occurred."},
     )
@@ -614,8 +619,8 @@ try:
     result = db.query(sql)
 except Exception:
     logger.error("Query failed", exc_info=True)
-    raise HTTPException(status_code=500, detail="Query execution failed.")
-    # NEVER: raise HTTPException(detail=str(exc))  — leaks internals
+    raise fastapi.HTTPException(status_code=500, detail="Query execution failed.")
+    # NEVER: raise fastapi.HTTPException(detail=str(exc))  — leaks internals
 ```
 
 **When to use:** All FastAPI services. Register the global exception handler in `create_app()`. Never use `str(exc)` directly in HTTP response bodies.

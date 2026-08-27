@@ -1,10 +1,10 @@
-from fastapi.testclient import TestClient
+import fastapi.testclient as ftc
 
-from package.main import app
+import package.main as pm
 
 
 def test_echo_endpoint() -> None:
-    client = TestClient(app)
+    client = ftc.TestClient(pm.app)
     response = client.post("/api/example/echo", json={"message": "hello"})
     assert response.status_code == 200
     assert response.json() == {"message": "hello", "length": 5}

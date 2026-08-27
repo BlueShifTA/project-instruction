@@ -246,17 +246,17 @@ python3 -c "import projectname"  # should not fail
 import asyncio
 import dataclasses as dc
 import logging
-from pathlib import Path
+import pathlib
 
 # Third-party
 import numpy as np
 import aiohttp
 
-# Local imports (absolute)
-from projectname.core import processor
-from projectname.storage import db
+# Local imports (absolute, module-aliased)
+import projectname.core.processor as pcp
+import projectname.storage.db as psd
 
-# Relative imports (same package only)
+# Relative imports (same directory only; private module for class imports)
 from ._protocols import ProcessorProtocol
 ```
 

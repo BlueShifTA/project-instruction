@@ -32,7 +32,7 @@ This repository uses Python 3.13+ and TypeScript/React. For complete coding rule
 
 ## Testing
 
-- pytest with `httpx.AsyncClient` via `ASGITransport` for endpoint tests
+- pytest with `httpx2.AsyncClient` via `ASGITransport` for endpoint tests
 - Prefer integration tests over unit tests
 - 80% minimum coverage
 - Descriptive names: `test_<function>_<scenario>_<expected_outcome>`

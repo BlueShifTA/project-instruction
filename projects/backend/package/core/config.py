@@ -1,12 +1,12 @@
+import functools
 import json
-from functools import lru_cache
-from typing import Annotated
+import typing
 
-from pydantic import field_validator
-from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
+import pydantic
+import pydantic_settings
 
 
-class Settings(BaseSettings):
+class Settings(pydantic_settings.BaseSettings):
     app_name: str = "Project Template API"
     app_version: str = "0.1.0"
     api_prefix: str = "/api"
@@ -22,12 +22,12 @@ class Settings(BaseSettings):
     # Security: explicit CORS origins only — no wildcards.  Wildcards are
     # rejected at startup by create_app().  Add your frontend origin here or
     # override via CORS_ORIGINS env var (comma-separated or JSON list).
-    cors_origins: Annotated[list[str], NoDecode] = [
+    cors_origins: typing.Annotated[list[str], pydantic_settings.NoDecode] = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
     ]
 
-    @field_validator("cors_origins", mode="before")
+    @pydantic.field_validator("cors_origins", mode="before")
     @classmethod
     def _parse_cors_origins(cls, value: str | list[str]) -> list[str]:
         if isinstance(value, list):
@@ -44,13 +44,13 @@ class Settings(BaseSettings):
     # Example: WORKER_THREADS=8 for a 4-core container.
     worker_threads: int | None = None
 
-    model_config = SettingsConfigDict(
+    model_config = pydantic_settings.SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
     )
 
 
-@lru_cache
+@functools.lru_cache
 def get_settings() -> Settings:
     return Settings()

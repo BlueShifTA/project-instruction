@@ -1,11 +1,11 @@
-from fastapi import APIRouter
+import fastapi
 
-from package.domain.models import ExampleEchoRequest, ExampleEchoResponse
-from package.services.example import echo_message
+import package.domain.models as pdm
+import package.services.example as pse
 
-router = APIRouter(prefix="/example", tags=["example"])
+router = fastapi.APIRouter(prefix="/example", tags=["example"])
 
 
-@router.post("/echo", response_model=ExampleEchoResponse)
-def echo(payload: ExampleEchoRequest) -> ExampleEchoResponse:
-    return echo_message(payload)
+@router.post("/echo", response_model=pdm.ExampleEchoResponse)
+def echo(payload: pdm.ExampleEchoRequest) -> pdm.ExampleEchoResponse:
+    return pse.echo_message(payload)

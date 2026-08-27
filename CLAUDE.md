@@ -82,7 +82,8 @@ Every change: **Red → Green → Refactor**. Never write implementation before 
 Full rules: [instruction/reference/PYTHON_STYLE.md](instruction/reference/PYTHON_STYLE.md). Enforced summary:
 
 - `snake_case` functions/vars, `PascalCase` classes, `CONSTANT_CASE` module constants, `_private` prefix for internal.
-- All imports at module top. No lazy/wildcard imports, no `from __future__ import annotations`, no `if TYPE_CHECKING:` blocks (all three hook-enforced). Module imports with an alias across directories and for all third-party libs (`import package.domain.models as pdm`, `import fastapi`) — never `from X import Y`; the only exception is relative imports within the same directory (`from .example import router`); no `from ..`.
+- All imports at module top. No lazy/wildcard imports, no `from __future__ import annotations`, no `if TYPE_CHECKING:` blocks (all three hook-enforced). Module imports for **everything** — stdlib, third-party, own packages (`import typing`, `import fastapi`, `import collections.abc as cabc`, `import package.domain.models as pdm`, `import pandas as pd`) — never `from X import Y`; the only exception is relative imports within the same directory (`from .example import router`); no `from ..`. Hook-enforced by `module-imports-only`.
+- Same-directory imports that pull in a **class** come from a private module: `from ._models import ExampleEchoRequest`, not `from .models import …`. The class is the public surface, not the file holding it. Modules exporting functions/objects (`from .main import app, create_app`) keep plain names.
 - Type-annotate every `__init__` parameter and attribute; return `-> None`. No `Any` unless justified.
 - `@dataclass` for data structures; `TypedDict` for JSON shapes (all keys required, `X | None` for nullable — no `NotRequired`, no `total=False`, no `dict[str, object]`/`dict[str, Any]`).
 - `typing.Protocol` for interfaces, not ABCs. No module-level mutable service instances (module constants and `app = create_app()` are fine).
@@ -143,7 +144,7 @@ Full rules: [instruction/reference/REFACTOR_AND_TESTING.md](instruction/referenc
 
 ## Verification Checklist
 
-Pre-commit handles formatting, ruff, mypy, pyright, prettier, eslint, tsc, and the custom bans (sys.path mutation, future annotations, TYPE_CHECKING). Before a PR also verify:
+Pre-commit handles formatting, ruff, mypy, pyright, prettier, eslint, tsc, and the custom bans (sys.path mutation, future annotations, TYPE_CHECKING, member imports). Before a PR also verify:
 
 - [ ] `just test` green; regression test included for bug fixes
 - [ ] No dead code, no unused imports; internal methods `_`-prefixed
